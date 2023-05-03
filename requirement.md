@@ -2,9 +2,10 @@
 
 ## Libraries
 ```
-require(shiny)   # Necessity
-require(ggplot2) # For better looking plots
-require(dplyr)   # For easier data manipulation reading
+library(shiny)   # Necessity
+library(ggplot2) # For better looking plots
+library(dplyr)   # For easier data manipulation reading
+library(devtools)# For easier development workflow
 ```
 
 ## A module in Shiny
@@ -19,8 +20,12 @@ It consumes a reactive variable (data)
 
 ### Organisation
 Each modules could be stored in different files.
-Each of them need documentation regarding what they do.
 We can create a template for the different modules we want.
+
+### Documentation
+Each of them need documentation regarding what they do.
+For everyone to contribute to their own module documentation, we can go with the recommendation stated in the [R package guidelines](https://r-pkgs.org/man.html#sec-man-workflow), and add roxygen comments at the start of each modules.
+
 
 ### Linting
 It would be nice to have a standardized coding schema.
