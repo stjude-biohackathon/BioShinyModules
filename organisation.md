@@ -17,7 +17,7 @@ Please help us modify and implement this file, with your ideas, expectation, que
 - [ ] Box
 - [ ] Heatmaps
 - [ ] Plotly
-- [ ] DNA methylation region plots/browsers : Yaseswini Neelamraju
+- [ ] DNA methylation region plots/browsers : Yaseswini Neelamraju and Christy LaFlamme
 - [ ] Manhattan plot : Yaseswini Neelamraju
 
 ## What general options do we want for each plot type? (Customization options, overlay options, export options)
