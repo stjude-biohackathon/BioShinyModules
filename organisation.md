@@ -13,12 +13,12 @@ Please help us modify and implement this file, with your ideas, expectation, que
 - [ ] Gene-specific expression across tSNE clusters
 - [ ] Single-cell mtDNA/mitochondrial transcriptome coverage
 - [ ] RNAseq
-- [ ] Survival
+- [ ] Survival : Yaseswini Neelamraju
 - [ ] Box
 - [ ] Heatmaps
 - [ ] Plotly
-- [ ] DNA methylation region plots/browsers
-- [ ] Manhattan plot
+- [ ] DNA methylation region plots/browsers : Yaseswini Neelamraju
+- [ ] Manhattan plot : Yaseswini Neelamraju
 
 ## What general options do we want for each plot type? (Customization options, overlay options, export options)
 
