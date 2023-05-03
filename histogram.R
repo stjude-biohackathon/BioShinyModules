@@ -1,4 +1,5 @@
 # This module was created during the St Jude Bio-Hackathon of May 2023 by the team 13.
+# author: Max Qiu (maxqiu@unl.edu)
 
 # Documentation
 #' R Shiny module to generate a histogram
