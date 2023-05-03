@@ -16,6 +16,7 @@ Please help us modify and implement this file, with your ideas, expectation, que
 - [ ] Survival : Yaseswini Neelamraju
 - [ ] Box
 - [ ] Heatmaps
+- [ ] Scatterplots (general) and try adding plotly: Lawryn
 - [ ] Plotly
 - [ ] DNA methylation region plots/browsers : Yaseswini Neelamraju and Christy LaFlamme
 - [ ] Manhattan plot : Yaseswini Neelamraju
