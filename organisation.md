@@ -28,6 +28,16 @@ Please help us modify and implement this file, with your ideas, expectation, que
 
 ## What file/object types do we want to be able to use?
 
+There are two test data can be used, located in [example_data](/example_data). One is [MS_2.rda](/example_data/MS_2.rda) contains three `data.frame`:
+
+- `df`, a `data.frame` with feature on row and sample on column. It doesn't matter what is feature, it could be gene if the data is RNA-Seq count/normalized count, or it could be peptide or metabolites if the data is Mass Spec peak intensity data. 
+
+- `sample_meta`, a `data.frame` containing sample metadata, such as sample names, sample group/label/class, sex, time point, etc. 
+
+- `feature_meta`, a `data.frame` containing feature metadata, such as gene name/symbol/emsembleID for gene (if gene is feature), accession number for protein/peptide (if peptide is feature)
+
+The second data [L29_vitro_Control_vs_knockdown_diff](/example_data/L29_vitro_Control_vs_knockdown_diff.txt) is a statistic result table, containing p-value and log2FC, among other variables. Could be the output from DESeq2 or other stat package. 
+
 ## What general stucture should we go for ?
 - Add tooltips to ggplot for plotly informations
 
