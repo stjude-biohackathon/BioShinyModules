@@ -18,6 +18,11 @@ Therefore they need:
 
 It consumes a reactive variable (data)
 
+### Why Shiny modules
+The magic of modules comes because these functions are constructed in a special way that creates a “namespace”. So far, when writing an app, the names (ids) of the controls are global: all parts of your server function can see all parts of your UI. Modules give you the ability to create controls that can only be seen from within the module. This is called a namespace because it creates “spaces” of “names” that are isolated from the rest of the app.
+
+Shiny modules have two big advantages. Firstly, namespacing makes it easier to understand how your app works because you can write, analyse, and test individual components in isolation. Secondly, because modules are functions they help you reuse code; anything you can do with a function, you can do with a module.
+
 ### Organisation
 This [tutorial](https://shiny.rstudio.com/articles/modules.html) is really nice and explain a lots of interesting thing.
 Each modules could be stored in different files.
