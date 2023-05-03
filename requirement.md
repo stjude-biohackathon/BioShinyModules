@@ -19,6 +19,7 @@ Therefore they need:
 It consumes a reactive variable (data)
 
 ### Organisation
+This [tutorial](https://shiny.rstudio.com/articles/modules.html) is really nice and explain a lots of interesting thing.
 Each modules could be stored in different files.
 We can create a template for the different modules we want.
 
