@@ -15,6 +15,18 @@ library(shiny)
 library(pheatmap)
 
 #### Function needed to work #### ----------
+#' plot sample-to-sample distance
+#'
+#' @param d A `dist` object.
+#' @param sample_anno A data frame, containing sample metadata, with sample names as rownames.
+#' @param sample_anno_col Character. Sample annotation column in `sample_anno`
+#' @param rowname_switch Logical, show feature annotation on heatmap
+#' @param colname_switch Logical, show sample annotation on heatmap
+#'
+#' @return
+#' @export
+#'
+#' @examples
 plotDist <- function(d, sample_anno, sample_anno_col,
                      rowname_switch = TRUE, colname_switch = TRUE) {
 
