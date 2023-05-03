@@ -18,7 +18,7 @@ library(dplyr)
 #### Function needed to work #### ----------
 #' plot Heatmap
 #'
-#' @param df A data frame or tibble. Normalized data matrix with feature (row) by sample (column)
+#' @param df A data frame with feature (row) by sample (column)
 #' @param sample_anno A data frame, containing sample metadata
 #' @param sample_anno_col Character. Sample annotation column in `sample_anno`
 #' @param feature_anno A data frame, containing feature metadata
