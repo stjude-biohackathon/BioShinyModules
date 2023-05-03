@@ -42,9 +42,11 @@ ggplot_truehist <- function(data, breaks = 50, title) {
 #### UI function of the module #### ----------
 
 histogram_ui <- function(id) {
+
         tagList(
                 numericInput(NS(id, "bins"), "bins", 20, min = 1, step = 1),
-                plotOutput(NS(id, "hist"))
+                plotOutput(NS(id, "hist")),
+                downloadButton(NS(id, "dnld"), label = "")
         )
 }
 
@@ -60,7 +62,12 @@ histogram_server <- function(id, x, title = reactive("Histogram")) {
                         main <- paste0(title(), " [", input$bins, "]")
                         ggplot_truehist(x(), breaks = input$bins, title = main)
                         # hist(x(), breaks = input$bins, main = main)
-                }, res = 96)
+                })
+
+                output$dnld <- downloadHandler(
+                        filename = function() {paste0('histogram', '.png')},
+                        content = function(file) {ggsave(file, plot(), width = 18, height = 10)}
+                )
         })
 }
 
