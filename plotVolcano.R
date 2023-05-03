@@ -16,6 +16,19 @@ library(ggplot2)
 library(shiny)
 
 #### Function needed to work #### ----------
+#' plot Volcano
+#'
+#' @param res A data frame or tibble, containing feature_col, padj_col, log2fc_col
+#' @param feature_col Character. Identify column containing variable name
+#' @param padj_col Character. The column name for adjusted P values. Used for plotting. Default to "padj".
+#' @param log2fc_col Character. The column name for log2 fole changes. Used for plotting. Default to "FC(log2)".
+#' @param fdr Numeric. The FDR cutoff to color highlighted features. Default 0.05
+#' @param log2fc Numeric. The log2 fold change cutoff to color highlighted features. Default is 1
+#'
+#' @return
+#' @export
+#'
+#' @examples
 plotVolcano <- function(res, feature_col = NULL, padj_col = NULL, log2fc_col = NULL,
                          fdr = 0.05, log2fc = 1) {
 
