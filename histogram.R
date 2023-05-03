@@ -15,6 +15,16 @@ library(shiny)
 library(ggplot2)
 
 #### Function needed to work #### ----------
+#' plot Histogram
+#'
+#' @param data A numeric vector.
+#' @param breaks Numeric. Number of bins. Default is 50
+#' @param title Character. Plot title.
+#'
+#' @return
+#' @export
+#'
+#' @examples
 ggplot_truehist <- function(data, breaks = 50, title) {
         data <- as.numeric(data)
         ggplot() +
@@ -55,6 +65,17 @@ histogram_server <- function(id, x, title = reactive("Histogram")) {
 }
 
 #### Demo function of the module #### ----------
+load("./example_data/MS_2.rda")
+
+histogram_demo <- function(){
+
+        d <- unlist(df)
+        ui <- fluidPage(histogram_ui("hist"))
+        server <- function(input, output, session) {
+                histogram_server("hist", reactive({d}))
+        }
+        shinyApp(ui, server)
+}
 
 source("csvImport.R")
 histogram_demo_1 <- function() {
