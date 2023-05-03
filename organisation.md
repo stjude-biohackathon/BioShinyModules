@@ -22,6 +22,7 @@ Please help us modify and implement this file, with your ideas, expectation, que
 - [Yaseswini Neelamraju ] Manhattan plot
 - [Max] sample-to-sample distance plot
 - [Max] Histogram
+- [Max] PCA plot
 
 ## What general options do we want for each plot type? (Customization options, overlay options, export options)
 
