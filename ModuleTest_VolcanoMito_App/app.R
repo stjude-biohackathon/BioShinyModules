@@ -29,12 +29,15 @@ combo<-summarise(grouped, mean=mean(uniq_cell_umiN), sd=sd(uniq_cell_umiN))
 module_volcano_ui <- function(id) {
   ns <- NS(id)
   tagList(
-    colourInput(NS(id,"dotcol"),"Pick point color", value = "black"),
-    radioButtons(NS(id,"stat"),"Choose statistic for plot",
-                 choices=c("-Log10 P value" = "log_pval","-Log10 adjusted P value" = "log_adjpval"),
-                 selected = "log_pval"),
-    plotOutput(NS(id,"volcano"))
-    
+    sidebarPanel(
+      colourInput(NS(id,"dotcol"),"Pick point color", value = "black"),
+      radioButtons(NS(id,"stat"),"Choose statistic for plot",
+                   choices=c("-Log10 P value" = "log_pval","-Log10 adjusted P value" = "log_adjpval"),
+                   selected = "log_pval")
+      ),
+    mainPanel(
+      plotOutput(NS(id,"volcano"))
+      )
   )
 }
 
@@ -52,10 +55,14 @@ module_volcano_server <- function(id) {
 module_mito_ui <- function(id) {
   ns <- NS(id)
   tagList(
-    colourInput(NS(id,"curve_area"),"Pick coverage color", value = "#69B3A2"),
-    numericInput(NS(id,"bp_num"), "mtDNA bp value", value = 3243),
-    numericInput(NS(id,"cov_threshold"),"Threshold", value = 100),
-    plotOutput(NS(id,"mtCoverage"))
+    sidebarPanel(
+      colourInput(NS(id,"curve_area"),"Pick coverage color", value = "#69B3A2"),
+      numericInput(NS(id,"bp_num"), "mtDNA bp value", value = 3243),
+      numericInput(NS(id,"cov_threshold"),"Threshold", value = 100)
+      ),
+    mainPanel(
+      plotOutput(NS(id,"mtCoverage"))
+      )
   )
 }
 module_mito_server <- function(id) {
