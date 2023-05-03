@@ -11,14 +11,13 @@
 #' module.demo()
 
 #### Library needed #### ----------
-# TODO Add here all the library needed for the module (ggplot2, tidyr, ...)
 library(ggplot2)
 library(shiny)
 
 #### Function needed to work #### ----------
 #' plot Volcano
 #'
-#' @param res A data frame or tibble, containing feature_col, padj_col, log2fc_col
+#' @param res A data frame, containing feature_col, padj_col, log2fc_col
 #' @param feature_col Character. Identify column containing variable name
 #' @param padj_col Character. The column name for adjusted P values. Used for plotting. Default to "padj".
 #' @param log2fc_col Character. The column name for log2 fole changes. Used for plotting. Default to "FC(log2)".
