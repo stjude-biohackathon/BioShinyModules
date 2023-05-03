@@ -23,6 +23,8 @@ The magic of modules comes because these functions are constructed in a special 
 
 Shiny modules have two big advantages. Firstly, namespacing makes it easier to understand how your app works because you can write, analyse, and test individual components in isolation. Secondly, because modules are functions they help you reuse code; anything you can do with a function, you can do with a module.
 
+For more informations, follow this [link](https://mastering-shiny.org/scaling-modules.html)
+
 ### Organisation
 This [tutorial](https://shiny.rstudio.com/articles/modules.html) is really nice and explain a lots of interesting thing.
 Each modules could be stored in different files.
