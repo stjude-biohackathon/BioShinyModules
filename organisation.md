@@ -8,7 +8,7 @@ Please help us modify and implement this file, with your ideas, expectation, que
 - [KELLY] Violin
 - [ ] GGplot
 - [ ] Karyotype
-- [ ] Pedigree
+- [ ] Pedigree: Christy LaFlamme
 - [ ] Timeline
 - [ ] Gene-specific expression across tSNE clusters
 - [KELLY ] Single-cell mtDNA/mitochondrial transcriptome coverage
