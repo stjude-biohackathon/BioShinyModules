@@ -14,7 +14,7 @@ Please help us modify and implement this file, with your ideas, expectation, que
 - [KELLY ] Single-cell mtDNA/mitochondrial transcriptome coverage
 - [ ] RNAseq
 - [ ] Survival : Yaseswini Neelamraju
-- [ ] Box
+- [Suzy ] Box
 - [ ] Heatmaps
 - [ ] Scatterplots (general) and try adding plotly: Lawryn
 - [ ] Plotly
