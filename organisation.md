@@ -5,13 +5,13 @@ Please help us modify and implement this file, with your ideas, expectation, que
 
 ## What plot types do we want to show?
 - [ ] Volcano
-- [ ] Violin
+- [KELLY] Violin
 - [ ] GGplot
 - [ ] Karyotype
 - [ ] Pedigree
 - [ ] Timeline
 - [ ] Gene-specific expression across tSNE clusters
-- [ ] Single-cell mtDNA/mitochondrial transcriptome coverage
+- [KELLY ] Single-cell mtDNA/mitochondrial transcriptome coverage
 - [ ] RNAseq
 - [ ] Survival : Yaseswini Neelamraju
 - [ ] Box
