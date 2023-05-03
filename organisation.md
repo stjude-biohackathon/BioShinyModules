@@ -4,7 +4,7 @@
 Please help us modify and implement this file, with your ideas, expectation, questions, ...
 
 ## What plot types do we want to show?
-- [ ] Volcano
+- [Max] Volcano
 - [KELLY] Violin
 - [ ] GGplot
 - [ ] Karyotype
@@ -15,11 +15,13 @@ Please help us modify and implement this file, with your ideas, expectation, que
 - [ ] RNAseq
 - [Yaseswini Neelamraju] Survival
 - [Suzy ] Box
-- [ ] Heatmaps
+- [Max] Heatmap
 - [ ] Scatterplots (general) and try adding plotly: Lawryn
 - [ ] Plotly
 - [Yaseswini Neelamraju; Christy LaFlamme] DNA methylation region plots/browsers
 - [Yaseswini Neelamraju ] Manhattan plot
+- [Max] sample-to-sample distance plot
+- [Max] Histogram
 
 ## What general options do we want for each plot type? (Customization options, overlay options, export options)
 
