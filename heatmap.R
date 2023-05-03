@@ -2,7 +2,7 @@
 # author: Max Qiu (maxqiu@unl.edu)
 
 # Documentation
-#' R Shiny module to generate a heatmap from a data matrix, a sample metadata and a feature metadata
+#' R Shiny module to generate a heatmap
 #'
 #' @param id A string.
 #' @param df A dataframe.
