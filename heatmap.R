@@ -16,6 +16,21 @@ library(pheatmap)
 library(dplyr)
 
 #### Function needed to work #### ----------
+#' plot Heatmap
+#'
+#' @param df A data frame or tibble. Normalized data matrix with feature (row) by sample (column)
+#' @param sample_anno A data frame, containing sample metadata
+#' @param sample_anno_col Character. Sample annotation column in `sample_anno`
+#' @param feature_anno A data frame, containing feature metadata
+#' @param feature_anno_col Character. Feature annotation column in `feature_anno`
+#' @param rowname_switch Logical, show feature annotation on heatmap
+#' @param colname_switch Logical, show sample annotation on heatmap
+#' @param main Character. Title of the heatmap
+#'
+#' @return
+#' @export
+#'
+#' @examples
 heatmap <- function(df, sample_anno, sample_anno_col,
                     feature_anno, feature_anno_col,
                     rowname_switch = TRUE, colname_switch = TRUE, main = "Heatmap") {
