@@ -24,6 +24,9 @@ Please help us modify and implement this file, with your ideas, expectation, que
 - [Max] Histogram
 - [Max] PCA plot
 
+
+## What modules do we have so far? List under each one what cusotmization options we want
+
 ## What general options do we want for each plot type? (Customization options, overlay options, export options)
 
 ## What file/object types do we want to be able to use?
