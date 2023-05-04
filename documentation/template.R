@@ -5,9 +5,11 @@
 #' 
 #' @param id A string.
 #' @param df A dataframe.
+#' @param vbl_x The variable name to use in df as abscissa.
+#' @param vbl_y The variable name to use in df as ordinate.
 #' @returns A Shiny module.
 #' @examples
-#' module.demo()
+#' test_demo()
 
 #### Library needed #### ----------
 # TODO Add here all the library needed for the module (ggplot2, tidyr, ...)
@@ -34,9 +36,11 @@ my_plot <- function(df, x_var, y_var) {
 
 test_ui <- function(id) {
   
-  fluidRow(
-    column(11, plotOutput(NS(id, "plot"))),
-    column( 1, downloadButton(NS(id, "dnld"), label = ""))
+  ns <- NS(id)
+  
+  tagList(
+    plotOutput(ns("plot")),
+    downloadButton(ns("dnld"), label = "")
   )
   
 }
@@ -74,4 +78,4 @@ test_demo <- function() {
 # TODO list for this template
 # TODO rename all the function as modulename_function
 # TODO add minimal data for testing
-# TODO update documentation
+# TODO update documentation at the top of the module to match the necessary parameters of the server.
