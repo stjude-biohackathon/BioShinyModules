@@ -27,10 +27,32 @@ Please help us modify and implement this file, with your ideas, expectation, que
 
 ## What modules do we have so far? List under each one what cusotmization options we want
 - [] Heatmap
-- [] Scatterplopt
-- [] Violin Plot
-- [] Volcano Plot
+       - color selection
+       - changing font sizes
+       - bars at top and side for meta data
+       - zoom in
+       - output table of selection in window
+- [] Plotly Scatterplot
+        - add linear regression line
+        - selection of points specific color (by user input, by pathway etc)
+        - adjusting x and y axis
+- [] plotDist
+- [] plot Volcano
+        - set p value cutoff interactively
+        - set fold change interactively
+        - up one color
+        - down one color
+        - color palettes
+        - label top points
+        - 
 - [] Histogram
+        - Add color picker
+        - Different bars different color or gradient
+- [] plot PCA
+        - Add color picker
+        - Shapes
+        - selection of points
+        - 
 ## What general options do we want for each plot type? (Customization options, overlay options, export options)
 
 ## What file/object types do we want to be able to use?
