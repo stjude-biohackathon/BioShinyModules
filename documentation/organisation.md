@@ -23,6 +23,7 @@ Please help us modify and implement this file, with your ideas, expectation, que
 - [Max] sample-to-sample distance plot
 - [Max] Histogram
 - [Max] PCA plot
+- [Lawryn] 3D interactive PCA plot
 
 
 ## What modules do we have so far? List under each one what cusotmization options we want
