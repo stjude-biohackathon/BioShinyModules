@@ -11,7 +11,6 @@
 #' module.demo()
 
 #### Library needed #### ----------
-# TODO Add here all the library needed for the module (ggplot2, tidyr, ...)
 library(shiny)
 library(ggplot2)
 library(data.table)
@@ -23,7 +22,7 @@ library(stringr)
 #### Function needed to work #### ----------
 #' Differentially methylated region (DMR) plot 
 #'
-#' @param data A data frame of B-values from methylation array
+#' @param data A data frame of B-values from DNA methylation array (eg. Illumina EPIC 850k)
 #' @param coordinates Genomic coordinates to plot (e.g. chr16:17562418-17565190)
 #' @param chrCol The name of the column containing the chromosome (e.g. chr16)
 #' @param startCol The name of the column containing the starting/beginning CpG coordinate (e.g. 17562418)
@@ -34,7 +33,6 @@ library(stringr)
 #' @export pdf
 
 #### plotting function of the module #### ----------
-
 plotDMR <- function(data, coordinates, chrCol, startCol, endCol, intSamples, title = ""){
   
   # get the sample names (column names of data matrix satisfying the following regular expression)
