@@ -94,7 +94,7 @@ plotDist_server <- function(id, d, sample_anno, sample_anno_col,
                 })
                 output$plot <- renderPlot({plot()})
                 output$dnld <- downloadHandler(
-                        filename = function() {paste0(vbl, '.png')},
+                        filename = function() {paste0("dist", '.png')},
                         content = function(file) {ggsave(file, plot())}
                 )
 
