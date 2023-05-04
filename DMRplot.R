@@ -42,6 +42,7 @@ plotDMR <- function(data, coordinates, chrCol, startCol, endCol, intSamples, tit
   samples <- samples[!is.na(samples)]
   
   # string split the given coordinates to pull the chromosome, start, and stop information
+  coordinates <- gsub(",", "", coordinates) # remove commas
   chr <- strsplit(coordinates, split = ":")[[1]][1]
   start <- strsplit(strsplit(coordinates, split = ":")[[1]][2], split = "-")[[1]][1]
   stop <- strsplit(strsplit(coordinates, split = ":")[[1]][2], split = "-")[[1]][2]
@@ -82,7 +83,7 @@ plotDMR <- function(data, coordinates, chrCol, startCol, endCol, intSamples, tit
 module_ui <- function(id) { 
   ns <- NS(id)
   tagList(
-    titlePanel(NS(id,"Interactive DMR plot")),
+    titlePanel("Interactive DMR plot"),
     textInput(NS(id,"coordinates"), "What genomic coordinates would you like to view? Please use format chrX:start-stop ", value = "chr16:17562418-17565190"),
     textInput(NS(id,"chrCol"), "What is the name of the column with the chromosome information? (e.g. chr16)", value = "CpG_chrm"),
     textInput(NS(id,"startCol"), "What is the name of the column with the start positions? (e.g. 17562418)", value = "CpG_beg"),
