@@ -1,0 +1,7 @@
+Sample_Name	Sample_Well	Sample_Plate	Sample_Designation	Sample_Group	Pool_ID	Reported_Sex	Sample_Type	Sample_Number	Sample_ID
+d4674-1	D06	mefford_uwcmg_dee_methylation_2~2	Control_Affected	Case	NA	Male	Blood	121	203866380012_R06C01
+d4685-1	E10	mefford_uwcmg_dee_methylation_3~7	Control_Affected	Case	NA	Female	Saliva	409	204873630063_R08C01
+d4685-2	F10	mefford_uwcmg_dee_methylation_3~7	Control_Unaffected_Mother	Control	NA	Female	Saliva	410	204809970063_R01C01
+FragileX_male1	A01	mefford_sjcrh_dee_methylation_6~10	Control_Affected	Case	NA	Male	PBMC	1065	205828610011_R01C01
+FragileX_female	B01	mefford_sjcrh_dee_methylation_6~10	Control_Affected	Case	NA	Female	PBMC	1066	205828610011_R02C01
+FragileX_male2	C01	mefford_sjcrh_dee_methylation_6~10	Control_Affected	Case	NA	Male	PBMC	1067	205828610011_R03C01
