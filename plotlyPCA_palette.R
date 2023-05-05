@@ -65,7 +65,6 @@ plot3DPCA_ui <- function(id) {
     selectInput(ns("palette"), "Choose color palette", choices = palettes, selected = "Dark2"),
     textInput(ns("title"), "Title graph", value = ""),
     plotlyOutput(ns("plot"))
-    # column( 1, downloadButton(ns("dnld"), label = "")) Is there a version that can download an html?
   )
 }
 
@@ -82,10 +81,7 @@ plot3DPCA_server <- function(id, df, sample_anno, sample_anno_col) {
     output$plot <- renderPlotly({
       plot()
     })
-    # output$dnld <- downloadHandler(
-    #   filename = function() {paste0("3D_pca", '.png')},
-    #   content = function(file) {ggsave(file, plot())}
-    # )
+    return(plot)
   })
 }
 
