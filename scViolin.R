@@ -1,5 +1,6 @@
 # This module was created during the St Jude Bio-Hackathon of May 2023 by the team 13.
-# author: @KMcC73
+# author: Louis El Khoury (louis.elkhoury@stjude.org)
+# author: @KMcC73 (kelly.mccastlain@stjude.org)
 # author: Louis Le Nézet (louislenezet@gmail.com)
 
 # Documentation
