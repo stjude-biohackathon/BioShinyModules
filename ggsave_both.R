@@ -42,7 +42,6 @@ ggsaveBoth_server <- function(id, my_plot) {
         # else
         #         pdf(file) # open the pdf device
         # dev.off()
-        print("Test2")
       }
     )
   })
