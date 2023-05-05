@@ -71,8 +71,7 @@ plotHeatmap <- function(df, sample_anno, sample_anno_col,
 plotHeatmap_ui <- function(id) {
   ns <- NS(id)
   tagList(
-    plotOutput(ns("plot")),
-    downloadButton(ns("dnld"), label = "")
+    plotOutput(ns("plot"))
   )
 }
 
@@ -97,14 +96,7 @@ plotHeatmap_server <- function(id, df, sample_anno, sample_anno_col,
     output$plot <- renderPlot({
       plot()
     })
-    output$dnld <- downloadHandler(
-      filename = function() {
-        paste0("heatmap", ".png")
-      },
-      content = function(file) {
-        ggsave(file, plot(), width = 18, height = 10)
-      }
-    )
+    return(plot)
   })
 }
 
