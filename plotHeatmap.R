@@ -11,12 +11,11 @@
 #' @param sample_anno_col The column name of sample category in sample_anno.
 #' @param feature_anno A data frame containing the features informations.
 #' @param feature_anno_col The column name of feature category in feature_anno.
-#' @param rowname_switch A boolean.
-#' @param colname_switch A boolean.
+#' @param rowname_switch Logical, show feature annotation on heatmap
+#' @param colname_switch Logical, show sample annotation on heatmap
 #' @returns A Shiny module.
 #' @examples
-#' heatmap_demo()
-
+#' plotHeatmap_demo()
 #### Library needed #### ----------
 library(shiny)
 library(pheatmap)
@@ -36,14 +35,10 @@ library(dplyr)
 #'
 #' @return A heatmap plot generated with pheatmap
 #' @export
-#'
-#' @examples
 
 plotHeatmap <- function(df, sample_anno, sample_anno_col,
-                    feature_anno, feature_anno_col,
-                    rowname_switch = TRUE, colname_switch = TRUE, main = "Heatmap") {
-  require(pheatmap)
-  require(dplyr)
+                        feature_anno, feature_anno_col,
+                        rowname_switch = TRUE, colname_switch = TRUE, main = "Heatmap") {
 
   # select annotation columns for sample meta and feature meta
   sample_anno <- sample_anno[sample_anno_col] # data.frame
@@ -83,8 +78,8 @@ plotHeatmap_ui <- function(id) {
 
 #### Server function of the module #### ----------
 plotHeatmap_server <- function(id, df, sample_anno, sample_anno_col,
-                           feature_anno, feature_anno_col,
-                           rowname_switch = TRUE, colname_switch = TRUE) {
+                               feature_anno, feature_anno_col,
+                               rowname_switch = TRUE, colname_switch = TRUE) {
   stopifnot(is.reactive(df))
   stopifnot(is.reactive(sample_anno))
   stopifnot(is.reactive(sample_anno_col))
@@ -93,11 +88,10 @@ plotHeatmap_server <- function(id, df, sample_anno, sample_anno_col,
 
   moduleServer(id, function(input, output, session) {
     plot <- reactive({
-
-            plotHeatmap(df(), sample_anno(), sample_anno_col(),
-                        feature_anno(), feature_anno_col(),
-                        rowname_switch = TRUE, colname_switch = TRUE,
-                        main = paste("Heatmap: ", dim(df())[1], "features", dim(df())[2], "samples")
+      plotHeatmap(df(), sample_anno(), sample_anno_col(),
+        feature_anno(), feature_anno_col(),
+        rowname_switch = TRUE, colname_switch = TRUE,
+        main = paste("Heatmap: ", dim(df())[1], "features", dim(df())[2], "samples")
       )
     })
     output$plot <- renderPlot({
@@ -115,23 +109,30 @@ plotHeatmap_server <- function(id, df, sample_anno, sample_anno_col,
 }
 
 #### Demo function of the module #### ----------
-load("./example_data/MS_2.rda")
 plotHeatmap_demo <- function() {
+  load("./example_data/MS_2.rda")
   df <- df
   sample_anno <- sample_meta
   sample_anno_col <- "sampleLabel"
   feature_anno <- feature_meta
   feature_anno_col <- "featureName"
 
-  ui <- fluidPage(plotHeatmap_ui("x"))
+  ui <- fluidPage(plotHeatmap_ui("plotHeatmap"))
   server <- function(input, output, session) {
-
-          plotHeatmap_server(
-                  "x", reactive({df}), reactive({sample_anno}), reactive({sample_anno_col}),
-                  reactive({feature_anno}), reactive({feature_anno_col}) )
-          }
+    plotHeatmap_server(
+      "plotHeatmap", reactive({
+        df
+      }), reactive({
+        sample_anno
+      }), reactive({
+        sample_anno_col
+      }),
+      reactive({
+        feature_anno
+      }), reactive({
+        feature_anno_col
+      })
+    )
+  }
   shinyApp(ui, server)
 }
-
-# TODO list for this template
-# TODO update documentation at the top of the module to match the necessary parameters of the server.
