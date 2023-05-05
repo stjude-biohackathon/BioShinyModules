@@ -14,6 +14,7 @@ library(EnhancedVolcano)
 library(data.table)
 library(reshape2)
 library(stringr)
+library(pcaMethods)
 
 
 ####----Input Files----####
@@ -38,6 +39,7 @@ df_meta <- read.delim(file = "TCGA_CHOL_Clinical_PatientID.txt", header = T, che
 ## Heatmap
 load("MS_2.rda")
 heatmap_df <- df
+pca_df <- df
 rm(df)
 sample_anno <- sample_meta
 sample_anno_col <- "sampleLabel"
@@ -49,6 +51,7 @@ histogram_df <- unlist(heatmap_df)
 
 ## DRM Data
 DMR_data <- fread("autosomes.beta.txt.sorted.chr16.txt")
+
 
 
 ####----Volcano----####
@@ -617,6 +620,54 @@ GeneViolin_server <- function(id, df_expr, df_meta) {
   })
 }
 
+
+####----PCA Plot----####
+
+ggplot_pca <- function(df, sample_anno, sample_anno_col, title = NULL) {
+  require(pcaMethods)
+  require(ggplot2)
+  
+  data <- as.matrix(df)
+  class(data) <- "numeric"
+  
+  labels <- as.matrix(sample_anno[sample_anno_col])
+  
+  pc1 <- pcaMethods::pca(t(data), scale = "pareto")
+  pc1merged <- merge(cbind(labels, t(data)),
+                     pcaMethods::scores(pc1),
+                     by = 0
+  )
+  ggplot(pc1merged, aes(PC1, PC2, colour = !!sym(sample_anno_col))) +
+    geom_point() +
+    stat_ellipse() +
+    xlab(paste("PC1", round((pc1@R2[1] * 100), digits = 1), "% of the variance")) +
+    ylab(paste("PC2", round((pc1@R2[2] * 100), digits = 1), "% of the variance")) +
+    ggtitle(label = title)
+}
+
+plotPCA_ui <- function(id) {
+  ns <- NS(id)
+  tagList(
+    plotOutput(ns("plot"))
+  )
+}
+
+plotPCA_server <- function(id, df, sample_anno, sample_anno_col) {
+  moduleServer(id, function(input, output, session) {
+    stopifnot(is.reactive(df))
+    stopifnot(is.reactive(sample_anno))
+    stopifnot(is.reactive(sample_anno_col))
+    
+    PCA_plot <- reactive({
+      ggplot_pca(df(), sample_anno(), sample_anno_col())
+    })
+    output$plot <- renderPlot({
+      PCA_plot()
+    })
+    return(PCA_plot)
+  })
+}
+
 ####----UI and Server----####
 
 ui <- 
@@ -676,6 +727,13 @@ ui <-
                           GeneViolin_ui("Violin")
                         )
                       )
+             ),
+             tabPanel("PCA",
+                      fluidPage(
+                        mainPanel(
+                          plotPCA_ui("pca")
+                        )
+                      )
              )
   )
 
@@ -691,6 +749,7 @@ server <- function(input, output, session) {
                      reactive({feature_anno}), reactive({feature_anno_col}))
   plotHist_server("hist", reactive({histogram_df}))
   GeneViolin_server("Violin", df_expr, df_meta)
+  plotPCA_server("pca", reactive({pca_df}), reactive({sample_anno}),reactive({sample_anno_col}))
 }
 
 
