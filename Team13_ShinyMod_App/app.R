@@ -32,10 +32,8 @@ grouped <- group_by(GEX5, position)
 combo<-summarise(grouped, mean=mean(uniq_cell_umiN), sd=sd(uniq_cell_umiN))
 
 ## Violin File
-expr<- read.delim(file="TCGA_CHOL_Expression_PatientID.txt", header=T, check.names=F) 
-meta<- read.delim(file="TCGA_CHOL_Clinical_PatientID.txt", header=T, check.names=F) 
-GeneList <- expr[,1]
-ColumnList <- colnames(meta)
+df_expr <- read.delim(file = "TCGA_CHOL_Expression_PatientID.txt", header = T, check.names = F)
+df_meta <- read.delim(file = "TCGA_CHOL_Clinical_PatientID.txt", header = T, check.names = F) 
 
 ## Heatmap
 load("MS_2.rda")
@@ -532,6 +530,93 @@ plotHist_server <- function(id, df, title = reactive("Histogram")) {
   })
 }
 
+
+####----Gene Violin----####
+
+plotGeneViolin <- function(df_expr, df_meta, geneSel, colSel) {
+  df_expr_sub <- df_expr[which(df_expr[, 1] == geneSel), ]
+  df_expr_sub <- as.data.frame(t(df_expr_sub))
+  colnames(df_expr_sub)[1] <- geneSel
+  
+  df_expr_sub$PatientID <- rownames(df_expr_sub)
+  rownames(df_expr_sub) <- NULL
+  df_expr_sub <- df_expr_sub[-1, ]
+  df_expr_sub[, 1] <- as.numeric(df_expr_sub[, 1])
+  
+  metaMerge <- merge(df_expr_sub, df_meta)
+  metaMerge[, colSel] <- as.factor(metaMerge[, colSel])
+  # colnames(metaMerge)[c(2,3)] <- c("Gene","MetaColumn")
+  
+  # Create plot
+  ggplot(metaMerge, aes(metaMerge[, colSel], metaMerge[, geneSel], fill = metaMerge[, colSel])) +
+    geom_violin() +
+    # geom_jitter(width = 0.3)+
+    geom_boxplot(width = 0.1, fill = "white") +
+    scale_fill_viridis(discrete = TRUE, option = "plasma", direction = -1, alpha = 0.6) +
+    theme(
+      panel.background = element_rect(
+        fill = "white", colour = "white",
+        #linewidth = 0.5,  ## GGplot version issue, argument not used
+        size = 0.5,
+        linetype = "solid", color = "grey73"
+      ),
+      panel.border = element_blank(),
+      
+      # plot.title = element_text(hjust=0, color="black", size=14, face="bold.italic"),
+      axis.title.x = element_text(color = "black", size = 14, face = "plain"),
+      axis.title.y = element_text(color = "black", size = 14, face = "plain"),
+      
+      # legend.key=element_rect(fill='white'),
+      legend.position = "none",
+      axis.line = element_line(linetype = "solid",
+                               #linewidth = 0.5,   ## GGplot version issue, argument not used
+                               size = 0.5, 
+                               colour = "black"),
+      axis.text.x = element_text(
+        face = "bold", color = "black",
+        size = 12, angle = 45, hjust = 1
+      ),
+      axis.text.y = element_text(
+        face = "bold", color = "black",
+        size = 12, angle = 0
+      )
+    ) +
+    xlab(colSel) +
+    ylab(geneSel)
+}
+
+GeneViolin_ui <- function(id) {
+  ns <- NS(id)
+  tagList(
+    sidebarPanel(
+      textInput(ns("geneSelected"), "Select Gene:", value = "MYC"),
+      uiOutput(ns("metaSelect"))
+    ),
+    mainPanel(
+      withSpinner(jqui_resizable(plotOutput(ns("Violin"))), type = 6)
+    )
+    
+  )
+}
+
+GeneViolin_server <- function(id, df_expr, df_meta) {
+  moduleServer(id, function(input, output, session) {
+    GeneViolin_plot <- reactive({
+      plotGeneViolin(df_expr, df_meta, input$geneSelected, input$metaSelected)
+    })
+    
+    ns <- NS(id)
+    output$metaSelect <- renderUI({
+      selectInput(ns("metaSelected"), "Select Column:", choices = colnames(df_meta))
+    })
+    
+    output$Violin <- renderPlot({
+      GeneViolin_plot()
+    })
+    #return(GeneViolin_plot)
+  })
+}
+
 ####----UI and Server----####
 
 ui <- 
@@ -584,6 +669,13 @@ ui <-
                           plotHist_ui("hist")
                         )
                       )
+             ),
+             tabPanel("Gene Violin",
+                      fluidPage(
+                        mainPanel(
+                          GeneViolin_ui("Violin")
+                        )
+                      )
              )
   )
 
@@ -598,6 +690,7 @@ server <- function(input, output, session) {
   plotHeatmap_server("plotHeatmap", reactive({heatmap_df}), reactive({sample_anno}), reactive({sample_anno_col}),
                      reactive({feature_anno}), reactive({feature_anno_col}))
   plotHist_server("hist", reactive({histogram_df}))
+  GeneViolin_server("Violin", df_expr, df_meta)
 }
 
 
