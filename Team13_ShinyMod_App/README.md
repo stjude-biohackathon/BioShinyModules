@@ -20,4 +20,4 @@
 - [ ] scGOI
 - [ ] scRidge
 - [ ] scDoHeatmap
-- [ ] Survival KMplot
+- [X] Survival KMplot
