@@ -21,7 +21,7 @@ colorChoices = c( met.brewer(name="Derain") )
 survivalUI <- fluidPage(
                             sidebarPanel( 
                               
-                                    fileInput( "inputFileSurvival" , "Upload input file for survival" ) ,
+                                    # fileInput( "inputFileSurvival" , "Upload input file for survival" ) ,
                                     selectInput( "time_var" , "Choose a column that has time variable" , choices = colnames(inputData) ),
                                     selectInput( "event_var" , "Choose a column that has event variable" , choices = colnames(inputData) ),
                                     selectInput( "select_surv_model" , "Choose a model" , choices = c("KM","Cox-proportional") ),
@@ -51,8 +51,9 @@ survivalServer <- function( input , output , session ){
                                     #                          req(input$inputFileSurvival)
                                     #                          datTmp <- read_tsv(input$methInFile$datapath) 
                                     #                         return(datTmp)
-                                                          })
-
+                                    #                     })
+                                    
+                                    ## `survDat` return the dataframe useful to plot survival curves 
                                     survDat = eventReactive( input$click_submit , {
                                                             if( input$select_surv_model == "KM" ){
                                                                
@@ -82,7 +83,10 @@ survivalServer <- function( input , output , session ){
                                                                   })
                                     
                                     output$survPlot = renderPlot({
-                                                                        survData_local = survDat()    
+                                                                        survData_local = survDat() 
+                                                                        
+                                                                        if( input$select_surv_model == "KM" ){
+                                      
                                                                         sfit = survfit( Surv( time_for_surv , event_for_surv  ) ~ surv_group , data = survData_local )
                                                                         names(sfit$strata) = gsub("surv_group=","",names(sfit$strata) )
                                                                         #surv_colors = setNames( colorChoices[ length(unique(survData_local$surv_group)) ] , unique(survData_local$surv_group) )
@@ -103,6 +107,7 @@ survivalServer <- function( input , output , session ){
                                                                                                    legend.text = element_text( size = 15 ) , 
                                                                                                    legend.title = element_text( size = 15 ) )
                                                                         return(p)
+                                                                       }
   
                                                           })
 
