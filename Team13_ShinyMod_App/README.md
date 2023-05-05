@@ -8,7 +8,7 @@
 - [X] Mito Coverage
 - [X] DMR Plot
 - [X] Heatmap
-- [ ] Histogram
+- [X] Histogram
 - [ ] Scatter Plot
 - [ ] PCA
 - [ ] Dist
