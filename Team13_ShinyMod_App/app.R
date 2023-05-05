@@ -21,6 +21,8 @@ library(ggthemes)
 library(survminer)
 library(survival)
 library(MetBrewer)
+library(GenomicRanges)
+library(wesanderson)
 
 ####----Input Files----####
 
@@ -58,18 +60,20 @@ histogram_df <- unlist(heatmap_df)
 ## DRM Data
 DMR_data <- fread("autosomes.beta.txt.sorted.chr16.txt")
 
+## Methylation Array
+options(shiny.maxRequestSize=200*1024^2)
+options(stringsAsFactors = F)
+colorChoices = c(met.brewer(name="Derain"))
+
 ## R color Brewer palettes
 palettes <- rownames(RColorBrewer::brewer.pal.info)
 
-### sc data
-#sc_df <- readRDS("pbmc3k.rds")
-#sc_df.updated = UpdateSeuratObject(object = sc_df)
-#
-#load("pbmc3k.rds")
+## sc data
+sc_df <- readRDS("pbmc3k.rds")
 
 ## Survival Data
 inputData_local = lung
-colorChoices = c(met.brewer(name="Derain") )
+colorChoices = c(met.brewer(name="Derain"))
 
 ####----Volcano----####
 
@@ -374,7 +378,7 @@ plotDMR <- function(data, coordinates, chrCol, startCol, endCol, intSamples, tit
   
   # pre-processing of data
   data <- data %>%
-    slice(startPos:endPos) %>%
+    dplyr::slice(startPos:endPos) %>%
     melt(id.vars = setdiff(colnames(data), samples), variable.name = "sampleID", value.name = "Beta") %>%
     mutate(status = ifelse(sampleID %in% intSamples, "Sample-of-Interest", "normal"))
   
@@ -396,7 +400,7 @@ plotDMR_ui <- function(id) {
   ns <- NS(id)
   tagList(
     sidebarPanel(
-      textInput(NS(id, "coordinates"), "What genomic coordinates would you like to view? Please use format chrX:start-stop ", value = "chr16:17562418-17565190"),
+      textInput(NS(id, "coordinates"), "What genomic coordinates would you like to view? Please use format chrX:start-stop ", value = "chr16:17563000-17565190"),
       textInput(NS(id, "chrCol"), "What is the name of the column with the chromosome information? (e.g. chr16)", value = "CpG_chrm"),
       textInput(NS(id, "startCol"), "What is the name of the column with the start positions? (e.g. 17562418)", value = "CpG_beg"),
       textInput(NS(id, "endCol"), "What is the name of the column with the end positions? (e.g. 17565190)", value = "CpG_end"),
@@ -425,6 +429,191 @@ plotDMR_server <- function(id, data) {
     })
     
   })
+}
+
+####----Methylation Array----####
+
+MethArray_ui <- function(id) {
+  ns <- NS(id)
+  tagList(
+    sidebarPanel(
+      ## Read the methylation data file 
+      fileInput(ns("methInFile") , "Upload the input file" , accept = c(".gz",".tsv") ), 
+      uiOutput(ns("methData_cols_notreqd")),
+      
+      ## Dropdown menu that lists columns from the phenotype file for the user to select appropriate column defining the sampleIDs 
+      fileInput(ns("phenoInFile") , "Upload phenotype file" ),
+      uiOutput(ns("pheno_sampleIDcol_ui")),
+      uiOutput(ns("pheno_colorBy_chooseBroad_ui" )),
+      uiOutput(ns("ui1")),
+      
+      ## Enter the region of interest
+      textInput(ns("RegionLocus") , "Enter the locus of interest(Ex:chr1:10-100)", value = "chr16:17562418-17565190"),
+      textInput(ns("allowFlankbp") , "How many bps can the locus be extended" , value = 10 ) ,
+      
+      actionButton(ns("submit_click") , "Find Regions" )
+      ),
+    mainPanel(
+      plotOutput(ns("methLinePlot" )),
+      plotOutput(ns("methBoxPlot" )),
+      tableOutput(ns("view"))
+      ## Plot output 
+      #plotOutput( linePlot_meth ),
+      #plotOutput( boxPlot_meth )
+      )
+    )
+}
+
+MethArray_server <- function(id) {
+  
+  moduleServer(id, function(input, output, session) {
+    
+    methData = reactive({
+      req(input$methInFile)
+      datTmp <- read_tsv(input$methInFile$datapath) 
+      return(datTmp)
+    })
+    
+    phenoData = reactive({
+      req(input$phenoInFile)
+      datTmp <- read_tsv(input$phenoInFile$datapath) 
+      return(datTmp)
+      
+    })
+    ns <- NS(id)
+    ## Automatically populates the column names identified in the phenotype file and methylation files 
+    output$pheno_sampleIDcol_ui = renderUI({
+      selectInput(ns("pheno_sampleIDcol") , "Select the column that denote sample id" , choices = names(phenoData()) )
+    })
+    
+    output$pheno_colorBy_chooseBroad_ui = renderUI({  
+      
+      selectInput(ns("pheno_colorBy_broadCategory") , 
+                   label = "How do you want to color the points?" , 
+                   choices = c("IndividualSamples","Specific Column from the phenotype" ))
+    })
+    
+    
+    output$ui1 <- renderUI({
+      
+      phenoData_local = phenoData()
+      phenoData_colnames = colnames(phenoData_local)
+      sampleID_column_local = input$pheno_sampleIDcol
+      sampleIDs = phenoData_local[, sampleID_column_local ]
+      
+      if (input$pheno_colorBy_broadCategory == 'IndividualSamples'){
+        selectInput(ns('samplesToGroup'), 'Select a group of samples', choices = sampleIDs , multiple=TRUE)
+      } else if ( input$pheno_colorBy_broadCategory == "Specific Column from the phenotype" ){
+        selectInput(ns('pheno_colorBy'), 'Choose a column to represent', choices = phenoData_colnames )
+      }
+    })
+    
+    ## Compute overlaps ## 
+    get_overlaps <- eventReactive( input$submit_click , {
+      
+      CpG_gr = makeGRangesFromDataFrame( methData() %>% dplyr::rename( "chr" = "CpG_chrm" , "start" = "CpG_beg", "end" = "CpG_end" ) , keep.extra.columns = TRUE )
+      SearchRegion = setNames( data.frame( t( data.frame( "SearchRegion" = unlist( strsplit( as.character( input$RegionLocus ) , split = ":|-" ) ) ) ) ) , c("chr","start","end") )
+      SearchRegion$start = as.numeric(SearchRegion$start) - as.numeric( input$allowFlankbp )
+      SearchRegion$end = as.numeric(SearchRegion$end) + as.numeric( input$allowFlankbp )
+      SearchRegion_gr = makeGRangesFromDataFrame( SearchRegion )
+      
+      ## Overlap 
+      OverlappingRegionCoord = as.data.frame( findOverlaps( CpG_gr , SearchRegion_gr ) )
+      
+      OverlappingRegions_CpGinformation = as.data.frame( CpG_gr [  OverlappingRegionCoord$queryHits  ] )
+      if( nrow(OverlappingRegions_CpGinformation) > 0 ){
+        return( OverlappingRegions_CpGinformation )
+      }else{
+        return( "No overlaps found" )
+      }                      
+    })
+    
+    
+    get_plotData <- eventReactive( input$submit_click , {
+      
+      OverlappingRegions_CpGinformation = get_overlaps()                  
+      
+      if( OverlappingRegions_CpGinformation != "No overlaps found" ){
+        
+        phenoData_local = phenoData()
+        phenoData_filtered = phenoData_local %>% dplyr::select( Sample_ID , input$pheno_colorBy ) %>% dplyr::rename( "SampleID" = "Sample_ID" )
+        
+        if( input$pheno_colorBy_broadCategory == "Specific Column from the phenotype" ){
+          
+          methPlotData = OverlappingRegions_CpGinformation %>% 
+            pivot_longer( cols = -c("seqnames","start","end","width","strand","probeID") , names_to = "SampleID" , values_to = "BetaValues") %>%
+            mutate( SampleID = gsub("^X","",SampleID) ) %>%
+            left_join( phenoData_filtered ) %>%
+            mutate( colorGroup = !!rlang::sym(input$pheno_colorBy) ) %>%
+            mutate( chrBase = paste0( seqnames , ":" , start , "-" , end ) )
+        }else if( input$pheno_colorBy_broadCategory == "IndividualSamples" ){
+          methPlotData = OverlappingRegions_CpGinformation %>% 
+            pivot_longer( cols = -c("seqnames","start","end","width","strand","probeID") , names_to = "SampleID" , values_to = "BetaValues") %>%
+            mutate( SampleID = gsub("^X","",SampleID) ) %>%
+            mutate( colorGroup = if_else( SampleID %in% input$samplesToGroup , "Sample-of-Interest" , "Others" ) ) %>%
+            mutate( chrBase = paste0( seqnames , ":" , start , "-" , end ) )
+        }
+        return(methPlotData)
+        
+      }
+      
+      
+    })
+    
+    output$view = renderTable({
+      if( get_overlaps() != "No overlaps found" ){
+        get_plotData() %>% head(n=3)
+      } 
+      else{
+        return( "No overlaps found" )
+      }
+    })
+    
+    
+    output$methLinePlot = renderPlot({
+      plotData = get_plotData()
+      
+      if( get_overlaps() != "No overlaps found" ){
+        
+        if( input$pheno_colorBy_broadCategory == "Specific Column from the phenotype"  ){
+          return(NULL)
+        }else{
+          
+          print(plotData$colorGroup)
+          print(plotData)
+          
+          p = ggplot( plotData , aes( x = chrBase , y = BetaValues  ) ) + 
+            geom_line(aes(group = SampleID,  linetype = colorGroup , colour = colorGroup ) ) +
+            scale_colour_manual(values = setNames( colorChoices[ 1:length(unique(plotData$colorGroup))] , c("Sample-of-Interest","Others") ) ) +
+            scale_linetype_manual(values = setNames( c("solid","dashed") , c("Sample-of-Interest","Others") ) ) +
+            coord_cartesian(ylim = c(0,1)) + 
+            theme_base() +
+            labs( x = "" , y = "Beta values" , title = input$Region_Locus ) + 
+            theme( legend.position = "top", legend.title = element_blank() , axis.text.x = element_text( angle = 45 , vjust = 1 , hjust = 1 ) )
+          
+          return(p) }
+      }
+    })
+    
+    output$methBoxPlot = renderPlot({
+      
+      plotData = get_plotData()
+      
+      if( get_overlaps() != "No overlaps found" ){
+        
+        ggplot( plotData , aes( x = chrBase , y = BetaValues , fill = colorGroup  ) ) + 
+          geom_boxplot() +
+          scale_fill_manual(values = setNames( colorChoices[ 1:length(unique(plotData$colorGroup))] , unique(plotData$colorGroup) ) ) +
+          coord_cartesian(ylim = c(0,1)) + 
+          theme_base() +
+          labs( x = "" , y = "Beta values" , title = input$Region_Locus ) + 
+          theme( legend.position = "top", legend.title = element_blank() , axis.text.x = element_text( angle = 45 , vjust = 1 , hjust = 1 ) )
+        
+      }                                         
+    })
+    
+  })
+  
 }
 
 
@@ -917,7 +1106,7 @@ plotKM_server <- function(id, data) {
   
 }
 
-####----scUMAP----####
+#####----scUMAP----####
 
 process_df <- function(df, resolution=0.5) {
   df <- NormalizeData(df)
@@ -938,7 +1127,8 @@ scUMAP_ui <- function(id) {
       numericInput(ns("parameter"), "Select Resolution", value = 0.5)
     ),
     mainPanel(
-      withSpinner(jqui_resizable(plotOutput(ns("UMAP"))), type = 6)
+      #withSpinner(jqui_resizable(plotOutput(ns("UMAP"))), type = 6)
+      jqui_resizable(plotOutput(ns("UMAP")))
     )
   )
 }
@@ -963,8 +1153,35 @@ scUMAP_server <- function(id, df) {
 
 ####----UI and Server----####
 
+#"#5050FFFF" "#CE3D32FF" "#749B58FF" "#F0E685FF" "#466983FF" "#BA6338FF"
+#"#5DB1DDFF" "#802268FF" "#6BD76BFF" "#D595A7FF" "#924822FF" "#837B8DFF"
+#"#C75127FF" "#D58F5CFF" "#7A65A5FF" "#E4AF69FF" "#3B1B53FF" "#CDDEB7FF"
+#"#612A79FF" "#AE1F63FF" "#E7C76FFF" "#5A655EFF" "#CC9900FF" "#99CC00FF"
+#"#A9A9A9FF" "#CC9900FF" "#99CC00FF" "#33CC00FF" "#00CC33FF" "#00CC99FF"
+#"#0099CCFF" "#0A47FFFF" "#4775FFFF" "#FFC20AFF" "#FFD147FF" "#990033FF"
+#"#991A00FF" "#996600FF" "#809900FF" "#339900FF" "#00991AFF" "#009966FF"
+#"#008099FF" "#003399FF" "#1A0099FF" "#660099FF" "#990080FF" "#D60047FF"
+#"#FF1463FF" "#00D68FFF"
+
 ui <- 
   navbarPage("Shiny Module Demos",
+             tags$style(HTML("
+                             .navbar-default .navbar-nav > li > a[data-value='Volcano'] {background-color: #CC9900FF;  color:white}
+                             .navbar-default .navbar-nav > li > a[data-value='Volcano 2'] {background-color: #1F77B4FF;   color:white}
+                             .navbar-default .navbar-nav > li > a[data-value='Enhanced Volcano'] {background-color: #FF7F0EFF;  color:white}
+                             .navbar-default .navbar-nav > li > a[data-value='Mito Coverage'] {background-color: #2CA02CFF; color:white}
+                             .navbar-default .navbar-nav > li > a[data-value='DMR Plot'] {background-color: #8C564BFF; color:white}
+                             .navbar-default .navbar-nav > li > a[data-value='Methylation Array'] {background-color: #9467BDFF; color:white}
+                             .navbar-default .navbar-nav > li > a[data-value='Heatmap'] {background-color: #CC9900FF; color:white}
+                             .navbar-default .navbar-nav > li > a[data-value='Histogram'] {background-color: #1F77B4FF; color:white}
+                             .navbar-default .navbar-nav > li > a[data-value='Gene Violin'] {background-color: #FF7F0EFF; color:white}
+                             .navbar-default .navbar-nav > li > a[data-value='PCA'] {background-color: #2CA02CFF; color:white}
+                             .navbar-default .navbar-nav > li > a[data-value='PCA Palette'] {background-color: #8C564BFF; color:white}
+                             .navbar-default .navbar-nav > li > a[data-value='Dist Plot'] {background-color: #9467BDFF; color:white}
+                             .navbar-default .navbar-nav > li > a[data-value='KM Survival Plot'] {background-color: #CC9900FF; color:white}
+                             .navbar-default .navbar-nav > li > a[data-value='scUMAP'] {background-color: #1F77B4FF; color:white}
+                             .navbar-default .navbar-nav > li[class=active]    > a {background-color: #7F7F7FFF; color:white}
+                             ")),
              tabPanel("Volcano",
                       fluidPage(
                         mainPanel(
@@ -997,6 +1214,13 @@ ui <-
                       fluidPage(
                         mainPanel(
                           plotDMR_ui("DMRmethPlot")
+                        )
+                      )
+             ),
+             tabPanel("Methylation Array",
+                      fluidPage(
+                        mainPanel(
+                          MethArray_ui("MethArray")
                         )
                       )
              ),
@@ -1049,6 +1273,13 @@ ui <-
                         )
                       )
              ),
+             tabPanel("scUMAP",
+                      fluidPage(
+                        mainPanel(
+                          scUMAP_ui("scUMAP")
+                        )
+                      )
+             )
   )
 
 
@@ -1067,6 +1298,8 @@ server <- function(input, output, session) {
   plot3DPCA_server("pcaPal", reactive({pca_df}), reactive({sample_anno}),reactive({sample_anno_col}))
   plotDist_server("dist", reactive({dist_df}), reactive({sample_anno}), reactive({sample_anno_col}))
   plotKM_server("kmPlot",inputData_local)
+  scUMAP_server("scUMAP",reactive({sc_df}))
+  MethArray_server("MethArray")
 }
 
 
