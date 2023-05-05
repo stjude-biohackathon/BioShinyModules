@@ -7,9 +7,15 @@
 #'
 #' @param id A string.
 #' @param df A dataframe.
+#' @param time_var Character
+#' @param event_var Character
+#' @param group_var Character
+#' @param group_var_type
 #' @returns A Shiny module.
 #' @examples
-#' module.demo()
+#' survival_demo()
+#' survival_demo_1()
+#' survival_demo_2()
 
 #### Library needed #### ----------
 library( shiny )
@@ -45,6 +51,7 @@ survival_ui <- function(id) {
 
 
 #### Server function of the module #### ----------
+
 survival_server <- function(id, df, time_var, event_var, group_var, group_var_type){
 
         stopifnot(is.reactive(df))
@@ -132,7 +139,7 @@ survival_server <- function(id, df, time_var, event_var, group_var, group_var_ty
 #### Demo functionof the module #### ----------
 
 survival_demo <- function() {
-        df <- read.delim("./example_data/survival.txt")
+        df <- read.delim("./example_data/InputData_for_Survival_v1.txt")
         time_var <- "time"
         event_var <- "status"
         group_var <- "sex"
