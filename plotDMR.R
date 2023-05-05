@@ -106,7 +106,7 @@ plotDMR_server <- function(id, df) {
 
 #### Demo function of the module #### ----------
 plotDMR_demo <- function() {
-  data <- fread("./autosomes.beta.txt.sorted") # example data
+  data <- fread("./example_data/autosomes.beta.txt.sorted.chr16") # example data
   ui <- fluidPage(
     plotDMR_ui("dmrplot")
   )
