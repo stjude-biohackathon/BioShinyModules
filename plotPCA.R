@@ -52,8 +52,7 @@ ggplot_pca <- function(df, sample_anno, sample_anno_col, title = NULL) {
 plotPCA_ui <- function(id) {
   ns <- NS(id)
   tagList(
-    plotOutput(ns("plot")),
-    downloadButton(ns("dnld"), label = "")
+    plotOutput(ns("plot"))
   )
 }
 
@@ -70,14 +69,7 @@ plotPCA_server <- function(id, df, sample_anno, sample_anno_col) {
     output$plot <- renderPlot({
       plot()
     })
-    output$dnld <- downloadHandler(
-      filename = function() {
-        paste0("pca", ".png")
-      },
-      content = function(file) {
-        ggsave(file, plot())
-      }
-    )
+    return(plot)
   })
 }
 
