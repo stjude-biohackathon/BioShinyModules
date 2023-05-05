@@ -66,7 +66,7 @@ dataImport_server <- function(id) {
           col_types <- NULL
         }
         if (ext %in% c("csv","txt")) {
-          df <- read.csv2(file,
+          df <- read.csv(file,
             sep = input$sep,
             quote = input$quote, header = input$heading,
             colClasses = colClasses
@@ -159,9 +159,7 @@ dataImport_demo <- function() {
     datafile <- dataImport_server("datafile")
 
     output$table <- renderDataTable({
-      print(datafile())
-      datafile() %>%
-        rownames_to_column(., "rownames")
+      datafile()
     })
   }
 
