@@ -16,7 +16,11 @@ library(reshape2)
 library(stringr)
 library(pcaMethods)
 library(RColorBrewer)
-
+library(Seurat)
+library(ggthemes)
+library(survminer)
+library(survival)
+library(MetBrewer)
 
 ####----Input Files----####
 
@@ -57,7 +61,15 @@ DMR_data <- fread("autosomes.beta.txt.sorted.chr16.txt")
 ## R color Brewer palettes
 palettes <- rownames(RColorBrewer::brewer.pal.info)
 
+### sc data
+#sc_df <- readRDS("pbmc3k.rds")
+#sc_df.updated = UpdateSeuratObject(object = sc_df)
+#
+#load("pbmc3k.rds")
 
+## Survival Data
+inputData_local = lung
+colorChoices = c(met.brewer(name="Derain") )
 
 ####----Volcano----####
 
@@ -800,6 +812,155 @@ plotDist_server <- function(id, d, sample_anno, sample_anno_col,
   })
 }
 
+####----KM Plot----####
+
+plotKM_ui <- function(id, data) {
+  ns <- NS(id)
+  tagList(
+    sidebarPanel(
+      selectInput(ns("time_var"), "Choose a column that has time variable", choices = colnames(data)),
+      selectInput(ns("event_var"), "Choose a column that has event variable", choices = colnames(data)),
+      selectInput(ns("select_surv_model"), "Choose a model" , choices = c("KM","Cox-proportional")),
+      selectInput(ns("group_var"), "Choose a group variable", choices = colnames(data)),
+      selectInput(ns("select_group_var_type"),"Choose the type of the variable", choices = c("categorical","continuous")),
+      #conditionalPanel(
+      #  condition = "input.select_surv_model == 'KM'",
+      #  selectInput("select_group_var_type", "Choose the type of the variable",  ## can add when Cox Regression is working
+      #  choices = c("categorical","continuous")))
+      actionButton(ns("click_submit"), label = "Run survival")
+    ),
+    mainPanel(
+      jqui_resizable(plotOutput(ns("survPlot"))),
+      tableOutput(ns("survTable"))
+    )
+  )
+}
+
+plotKM_server <- function(id, data) {
+  
+  moduleServer(id, function(input, output, session) {
+    
+    ## if input file is choosen 
+    #inputData <- reactive({
+    #                          req(input$inputFileSurvival)
+    #                          datTmp <- read_tsv(input$methInFile$datapath) 
+    #                         return(datTmp)
+    #                     })
+    
+    ## `survDat` return the dataframe useful to plot survival curves 
+    survDat = eventReactive( input$click_submit , {
+      if( input$select_surv_model == "KM" ){
+        
+        #inputData_local = inputData()
+        timeVar <- input$time_var
+        eventVar <- input$event_var
+        groupVar <- input$group_var
+        groupVarType <- input$select_group_var_type
+        
+        datTmp = data %>% dplyr::select( timeVar , eventVar , groupVar ) %>% data.frame 
+        datTmp[ , "time_for_surv" ] = as.numeric( datTmp[ , timeVar ] )
+        datTmp[ , "event_for_surv" ] = as.numeric( datTmp[ , eventVar ] )
+        if( input$select_group_var_type == "continuous" ){
+          
+          datTmp$numeric_val = datTmp[ ,groupVar ]
+          datTmp$surv_group = ifelse(datTmp$numeric_val >= median(datTmp$numeric_val), ">Median", "<Median" )
+          #return(datTmp)
+          
+        }else if( input$select_group_var_type == "categorical" ){
+          
+          datTmp$surv_group = factor( datTmp[ , groupVar ] )
+          #return(datTmp)
+        }
+        
+        datTmp
+        
+      }
+      
+    })
+    
+    output$survTable = renderTable({ 
+      survDat() %>% head  
+    })
+    
+    output$survPlot = renderPlot({
+      survData_local = survDat() 
+      groupVar <- input$group_var
+      
+      #if( input$select_surv_model == "KM" ){
+        
+        sfit = survfit( Surv( time_for_surv , event_for_surv  ) ~ surv_group , data = survData_local )
+        names(sfit$strata) = gsub("surv_group=","",names(sfit$strata) )
+        #surv_colors = setNames( colorChoices[ length(unique(survData_local$surv_group)) ] , unique(survData_local$surv_group) )
+        
+        p = ggsurvplot(  sfit, 
+                         data = survData_local,
+                         risk.table = TRUE,
+                         legend.title = groupVar,
+                         ggtheme = theme_classic(),
+                         palette = "nejm"
+        )
+        p$plot = p$plot + theme( axis.text = element_text( size = 15 ) , 
+                                 axis.title = element_text( size = 15 ) , 
+                                 legend.text = element_text( size = 15 ) , 
+                                 legend.title = element_text( size = 15 ) )
+        p$table = p$table + theme( axis.text = element_text( size = 15 ) , 
+                                   axis.title = element_text( size = 15 ) , 
+                                   legend.text = element_text( size = 15 ) , 
+                                   legend.title = element_text( size = 15 ) )
+        #return(p)
+        p
+      #}
+      
+    })
+    
+  })
+  
+}
+
+####----scUMAP----####
+
+process_df <- function(df, resolution=0.5) {
+  df <- NormalizeData(df)
+  df <- FindVariableFeatures(df, selection.method = "vst", nfeatures = 3000)
+  df <- ScaleData(df, verbose = FALSE)
+  df <- RunPCA(df, npcs = 15, verbose = FALSE)
+  df <- RunUMAP(df, reduction = "pca", dims = 1:15)
+  df <- FindNeighbors(df, reduction = "pca", dims = 1:15)
+  df <- RunTSNE(df)
+  df <- FindClusters(df, resolution = resolution)
+  return(df)
+}
+
+scUMAP_ui <- function(id) {
+  ns <- NS(id)
+  tagList(
+    sidebarPanel(
+      numericInput(ns("parameter"), "Select Resolution", value = 0.5)
+    ),
+    mainPanel(
+      withSpinner(jqui_resizable(plotOutput(ns("UMAP"))), type = 6)
+    )
+  )
+}
+
+scUMAP_server <- function(id, df) {
+  stopifnot(is.reactive(df))
+  
+  moduleServer(id, function(input, output, session) {
+    scUMAP_plot <- reactive({
+      # Processing data
+      df_processed <- process_df(df(), input$parameter)
+      
+      # UMAP
+      DimPlot(df_processed, reduction = "umap", cols = ggsci::pal_igv()(50))
+    })
+    output$UMAP <- renderPlot({
+      scUMAP_plot()
+    })
+    #return(scUMAP_plot)
+  })
+}
+
 ####----UI and Server----####
 
 ui <- 
@@ -880,7 +1041,14 @@ ui <-
                           plotDist_ui("dist")
                         )
                       )
-             )
+             ),
+             tabPanel("KM Survival Plot",
+                      fluidPage(
+                        mainPanel(
+                          plotKM_ui("kmPlot",inputData_local)
+                        )
+                      )
+             ),
   )
 
 
@@ -898,7 +1066,7 @@ server <- function(input, output, session) {
   plotPCA_server("pca", reactive({pca_df}), reactive({sample_anno}),reactive({sample_anno_col}))
   plot3DPCA_server("pcaPal", reactive({pca_df}), reactive({sample_anno}),reactive({sample_anno_col}))
   plotDist_server("dist", reactive({dist_df}), reactive({sample_anno}), reactive({sample_anno_col}))
-  
+  plotKM_server("kmPlot",inputData_local)
 }
 
 
