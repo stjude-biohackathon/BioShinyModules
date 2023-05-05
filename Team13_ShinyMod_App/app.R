@@ -40,6 +40,7 @@ df_meta <- read.delim(file = "TCGA_CHOL_Clinical_PatientID.txt", header = T, che
 load("MS_2.rda")
 heatmap_df <- df
 pca_df <- df
+dist_df <- dist(t(df))
 rm(df)
 sample_anno <- sample_meta
 sample_anno_col <- "sampleLabel"
@@ -648,7 +649,7 @@ ggplot_pca <- function(df, sample_anno, sample_anno_col, title = NULL) {
 plotPCA_ui <- function(id) {
   ns <- NS(id)
   tagList(
-    plotOutput(ns("plot"))
+    withSpinner(jqui_resizable(plotOutput(ns("plot"))), type = 6)
   )
 }
 
@@ -664,7 +665,79 @@ plotPCA_server <- function(id, df, sample_anno, sample_anno_col) {
     output$plot <- renderPlot({
       PCA_plot()
     })
-    return(PCA_plot)
+    #return(PCA_plot)
+  })
+}
+
+
+####----Dist Plot----####
+
+plotDist <- function(d, sample_anno, sample_anno_col,
+                     rowname_switch = TRUE, colname_switch = TRUE) {
+  # select annotation columns for sample meta and feature meta
+  sample_anno <- sample_anno[sample_anno_col] # data.frame
+  
+  # check distance matrix
+  if (class(d) != "dist") {
+    stop("Provided `d` is not a `dist` object.")
+  }
+  if (length(d) != sum(1:(nrow(sample_anno) - 1))) {
+    stop("Provided `d` is not the corrected length based on provided `sample_anno`.")
+  }
+  
+  # plot
+  pheatmap(
+    as.matrix(d),
+    clustering_distance_rows = d,
+    clustering_distance_cols = d,
+    annotation_col = sample_anno,
+    annotation_row = sample_anno,
+    annotation_names_col = FALSE,
+    # display_numbers = TRUE,
+    angle_col = 45,
+    scale = "none",
+    show_rownames = rowname_switch,
+    show_colnames = colname_switch,
+    # cluster_rows = T,cluster_cols = T,
+    # cellwidth = 30.0,
+    # fontsize_row = 8,
+    # fontsize_col = 8,
+    # treeheight_col = 25,
+    # treeheight_row = 25,
+    # fontsize_number = 6,
+    main = paste(
+      "Sample-to-sample distance matrix: ",
+      nrow(sample_anno), "samples"
+    )
+  )
+  if (isTRUE(save)) {
+    ggsave(TITLE,
+           path = folder,
+           device = "png",
+           plot = p3, dpi = 300, width = 17, height = 10
+    )
+  }
+}
+
+plotDist_ui <- function(id) {
+  ns <- NS(id)
+  tagList(
+    withSpinner(jqui_resizable(plotOutput(ns("plot"))), type = 6)
+  )
+}
+
+plotDist_server <- function(id, d, sample_anno, sample_anno_col,
+                            rowname_switch = TRUE, colname_switch = TRUE) {
+  moduleServer(id, function(input, output, session) {
+    Dist_plot <- reactive({
+      plotDist(d(), sample_anno(), sample_anno_col(),
+               rowname_switch = TRUE, colname_switch = TRUE
+      )
+    })
+    output$plot <- renderPlot({
+      Dist_plot()
+    })
+    #return(Dist_plot)
   })
 }
 
@@ -734,6 +807,13 @@ ui <-
                           plotPCA_ui("pca")
                         )
                       )
+             ),
+             tabPanel("Dist Plot",
+                      fluidPage(
+                        mainPanel(
+                          plotDist_ui("dist")
+                        )
+                      )
              )
   )
 
@@ -750,6 +830,7 @@ server <- function(input, output, session) {
   plotHist_server("hist", reactive({histogram_df}))
   GeneViolin_server("Violin", df_expr, df_meta)
   plotPCA_server("pca", reactive({pca_df}), reactive({sample_anno}),reactive({sample_anno_col}))
+  plotDist_server("dist", reactive({dist_df}), reactive({sample_anno}), reactive({sample_anno_col}))
 }
 
 
