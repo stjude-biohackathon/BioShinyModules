@@ -15,6 +15,7 @@ library(data.table)
 library(reshape2)
 library(stringr)
 library(pcaMethods)
+library(RColorBrewer)
 
 
 ####----Input Files----####
@@ -52,6 +53,9 @@ histogram_df <- unlist(heatmap_df)
 
 ## DRM Data
 DMR_data <- fread("autosomes.beta.txt.sorted.chr16.txt")
+
+## R color Brewer palettes
+palettes <- rownames(RColorBrewer::brewer.pal.info)
 
 
 
@@ -669,6 +673,61 @@ plotPCA_server <- function(id, df, sample_anno, sample_anno_col) {
   })
 }
 
+####----PCA Palette----####
+
+ggplotly_3Dpca <- function(df, sample_anno, sample_anno_col, pal, title) {
+  data <- as.matrix(df)
+  class(data) <- "numeric"
+  
+  labels <- as.matrix(sample_anno[sample_anno_col])
+  
+  pc1 <- pcaMethods::pca(t(data), nPcs = 3, scale = "pareto")
+  pc1merged <- merge(cbind(labels, t(data)),
+                     pcaMethods::scores(pc1),
+                     by = 0
+  )
+  
+  plot_ly(pc1merged,
+          x = ~PC1, y = ~PC2, z = ~PC3, type = "scatter3d",
+          color = sample_anno$sampleLabel, colors = pal,
+          text = sample_anno$sampleName, hoverinfo = "text"
+  ) %>%
+    layout(title = title, scene = list(
+      xaxis = list(title = "PC1"),
+      yaxis = list(title = "PC2"),
+      zaxis = list(title = "PC3")
+    ))
+}
+
+plot3DPCA_ui <- function(id) {
+  ns <- NS(id)
+  tagList(
+    sidebarPanel(
+      selectInput(ns("palette"), "Choose color palette", choices = palettes, selected = "Dark2"),
+      textInput(ns("title"), "Title graph", value = ""),
+    ),
+    mainPanel(
+      withSpinner(jqui_resizable(plotlyOutput(ns("plot"))), type = 6)
+    )
+  )
+}
+
+plot3DPCA_server <- function(id, df, sample_anno, sample_anno_col) {
+  moduleServer(id, function(input, output, session) {
+    stopifnot(is.reactive(df))
+    stopifnot(is.reactive(sample_anno))
+    stopifnot(is.reactive(sample_anno_col))
+    
+    PCA3D_plot <- reactive({
+      ggplotly_3Dpca(df(), sample_anno(), sample_anno_col(), input$palette, input$title)
+    })
+    output$plot <- renderPlotly({
+      PCA3D_plot()
+    })
+    #return(PCA3D_plot)
+  })
+}
+
 
 ####----Dist Plot----####
 
@@ -808,6 +867,13 @@ ui <-
                         )
                       )
              ),
+             tabPanel("PCA Palette",
+                      fluidPage(
+                        mainPanel(
+                          plot3DPCA_ui("pcaPal")
+                        )
+                      )
+             ),
              tabPanel("Dist Plot",
                       fluidPage(
                         mainPanel(
@@ -830,7 +896,9 @@ server <- function(input, output, session) {
   plotHist_server("hist", reactive({histogram_df}))
   GeneViolin_server("Violin", df_expr, df_meta)
   plotPCA_server("pca", reactive({pca_df}), reactive({sample_anno}),reactive({sample_anno_col}))
+  plot3DPCA_server("pcaPal", reactive({pca_df}), reactive({sample_anno}),reactive({sample_anno_col}))
   plotDist_server("dist", reactive({dist_df}), reactive({sample_anno}), reactive({sample_anno_col}))
+  
 }
 
 
