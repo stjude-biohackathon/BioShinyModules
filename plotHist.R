@@ -87,7 +87,7 @@ plotHist_demo <- function() {
   }
   shinyApp(ui, server)
 }
-plotHist_demo ()
+
 plotHist_demo_1 <- function() {
   source("dataImport.R")
   ui <- fluidPage(
