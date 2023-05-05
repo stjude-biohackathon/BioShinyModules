@@ -18,6 +18,23 @@ library(tidyverse)
 library(plotly)
 library(colourpicker)
 
+#### Function needed to work #### ----------
+#' Differentially methylated region (DMR) plot
+#'
+#' @param df A data frame of B-values from DNA methylation array (eg. Illumina EPIC 850k); must be in ascending order by genomic position
+#' @return plot
+#' @export pdf
+
+plotScatter <- function(df, colx, coly, dotcol, title){
+  req(is.numeric(df[,colx]))
+  req(is.numeric(df[,coly]))
+  print(c(colx, coly))
+  ggplot(df, aes(x=.data[[colx]],y=.data[[coly]])) + #Crashed R on my side
+    geom_point(col=dotcol) + 
+    ggtitle(title) + xlab(colx) + ylab(coly)
+}
+
+
 #### UI function of the module #### ----------
 plotScatter_ui <- function(id, df) {
   ns <- NS(id)
@@ -35,17 +52,11 @@ plotScatter_server <- function(id, df) {
   stopifnot(is.reactive(df))
 
   moduleServer(id, function(input, output, session) {
-    plot <- reactive({
-      req(input$y_columns_sel)
-      req(input$x_columns_sel)
-      print(input$y_columns_sel)
-      print(input$x_columns_sel)
-      ggplot(df(), aes(x=!!sym(input$x_columns_sel), y=!!sym(input$y_columns_sel))) + #Crashed R on my side
-        geom_point(col=input$dotcol) + 
-        ggtitle(input$title) + xlab(input$x_columns_sel) + ylab(input$y_columns_sel)
+    Scatter_plot <- reactive({
+      plotScatter(df(),input$x_columns_sel, input$y_columns_sel, input$dotcol, input$title)
     })
     output$scatter <- renderPlotly({
-      plot()
+      Scatter_plot()
     })
     ns <- NS(id)
     output$x_columns <- renderUI({
@@ -55,7 +66,7 @@ plotScatter_server <- function(id, df) {
       selectInput(ns("y_columns_sel"), "Select column to plot on y axis", choices=colnames(df()))
     })
     
-    return(plot)
+    return(Scatter_plot)
     
   })
 }
