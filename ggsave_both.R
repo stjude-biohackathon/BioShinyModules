@@ -1,5 +1,6 @@
 # This module was created during the St Jude Bio-Hackathon of May 2023 by the team 13.
 # author: Max Qiu (ytqiuhaowen@gmail.com)
+# author: Louis Le Nézet (louislenezet@gmail.com)
 
 # Documentation
 #' R Shiny module to save a plot to file, choosing between png and pdf
