@@ -13,7 +13,7 @@
 - [ ] PCA
 - [ ] Dist
 - [ ] PCA Palette
-- [ ] Gene Violin
+- [X] Gene Violin
 - [ ] scUMAP
 - [ ] scViolin
 - [ ] scTSNE
