@@ -60,17 +60,17 @@ plotHist_server <- function(id, df, title = reactive("Histogram")) {
   stopifnot(is.reactive(title))
 
   moduleServer(id, function(input, output, session) {
-    histPlot <- reactive({
+    hist_plot <- reactive({
       req(is.numeric(df()))
       main <- paste0(title(), " [", input$bins, "]")
       ggplot_truehist(df(), breaks = input$bins, title = main)
     })
     
     output$hist <- renderPlot({
-      histPlot()
+      hist_plot()
       # hist(df(), breaks = input$bins, main = main)
     })
-    return(histPlot)
+    return(hist_plot)
   })
 }
 

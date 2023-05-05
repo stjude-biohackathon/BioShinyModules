@@ -89,15 +89,15 @@ plotDist_ui <- function(id) {
 plotDist_server <- function(id, d, sample_anno, sample_anno_col,
                             rowname_switch = TRUE, colname_switch = TRUE) {
   moduleServer(id, function(input, output, session) {
-    plot <- reactive({
+    Dist_plot <- reactive({
       plotDist(d(), sample_anno(), sample_anno_col(),
         rowname_switch = TRUE, colname_switch = TRUE
       )
     })
     output$plot <- renderPlot({
-      plot()
+      Dist_plot()
     })
-    return(plot)
+    return(Dist_plot)
   })
 }
 

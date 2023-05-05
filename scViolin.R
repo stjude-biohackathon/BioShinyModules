@@ -50,8 +50,7 @@ scViolin_server <- function(id, df) {
   stopifnot(is.reactive(df))
 
   moduleServer(id, function(input, output, session) {
-    output$scViolin <- renderPlot({
-      
+    scViolin_plot <- reactive({
       # Processing data
       df_processed <- process_df(df(), input$parameter)
       
@@ -59,8 +58,11 @@ scViolin_server <- function(id, df) {
       
       #Violin plot
       VlnPlot(df_processed , features = 'CHCHD2', ncol = 3, cols = ggsci::pal_igv()(50))
-      
     })
+    output$scViolin <- renderPlot({
+      scViolin_plot()
+    })
+    return(scViolin_plot)
   })
 }
 
@@ -77,7 +79,5 @@ scViolin_demo <- function() {
   }
   shinyApp(ui, server)  
 }
-
-scViolin_demo()
 
 # TODO add documentation

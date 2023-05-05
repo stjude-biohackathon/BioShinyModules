@@ -10,7 +10,6 @@
 #' @returns A Shiny module.
 #' @examples
 #' scGOI_demo()
-
 #### Library needed #### ----------
 library(Seurat)
 library(shiny)
@@ -49,19 +48,19 @@ scGOI_server <- function(id, df) {
   stopifnot(is.reactive(df))
 
   moduleServer(id, function(input, output, session) {
-    plot <- reactive({
+    scGOI_plot <- reactive({
       # Processing data
       df_processed <- process_df(df(), input$parameter)
-      
+
       GeneSel <- toupper(input$geneSelect)
-      
+
       # Feature plot
       FeaturePlot(df_processed, features = GeneSel, cols = c("grey", "red"), order = T)
     })
     output$GOIcluster <- renderPlot({
-      plot()
+      scGOI_plot()
     })
-    return(plot)
+    return(scGOI_plot)
   })
 }
 

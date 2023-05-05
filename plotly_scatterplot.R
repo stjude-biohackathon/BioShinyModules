@@ -1,57 +1,80 @@
 # This module was created during the St Jude Bio-Hackathon of May 2023 by the team 13.
 # author: Lawryn Kasper (lawryn.kasper@stjude.org)
+# author: Louis Le Nézet (louislenezet@gmail.fr)
 
 # Documentation
-# R Shiny module to generate a scatterplot with hover text
-#
+#' R Shiny module to generate a scatterplot with hover text
+#' 
+#' @param id A string.
+#' @param df A dataframe.
+#' @returns A Shiny module.
+#' @examples
+#' plotScatter_demo()
 
+#### Library needed #### ----------
 library(shiny)
 library(ggplot2)
 library(tidyverse)
 library(plotly)
 library(colourpicker)
 
-library(shiny)
-
-df <- read.delim("L29_vitro_Control_vs_knockdown_diff.txt") # read in file - this needs to be generalized to allow user to read in any file
-df <- mutate(df, log_pval = -log10(df$P.Value))
-df <- mutate(df, log_adjpval = -log10(df$adj.P.Val))
-
-
-
-scatter_ui <- function(id) {
+#### UI function of the module #### ----------
+plotScatter_ui <- function(id, df) {
+  ns <- NS(id)
   tagList(
-  colourInput(NS(id,"dotcol"),"Pick point color", value = "black"),
-  selectInput(NS(id,"x_columns"), "Select column to plot on x axis", choices=colnames(df), selected = "logFC"),
-  selectInput(NS(id,"y_columns"), "Select column to plot on y axis", choices=colnames(df), selected = "log_pval"),
-  textInput(NS(id,"title"), "Enter title text", ""),
-  plotlyOutput(NS(id,"scatter"))
+    colourInput(ns("dotcol"),"Pick point color", value = "black"),
+    uiOutput(ns("x_columns")),
+    uiOutput(ns("y_columns")),
+    textInput(ns("title"), "Enter title text", ""),
+    plotlyOutput(ns("scatter"))
 )
-  }
+}
 
+#### Server function of the module #### ----------
+plotScatter_server <- function(id, df) {
+  stopifnot(is.reactive(df))
 
-
-
-scatter_server <- function(id) {
   moduleServer(id, function(input, output, session) {
-    output$scatter <- renderPlotly({
-      
-      ggplot(df, aes(x=df[,input$x_columns], y=df[,input$y_columns], text=df[,1])) + geom_point(col=input$dotcol) + 
-        ggtitle(input$title) + xlab(input$x_columns) + ylab(input$y_columns)
-    
+    plot <- reactive({
+      req(input$y_columns_sel)
+      req(input$x_columns_sel)
+      print(input$y_columns_sel)
+      print(input$x_columns_sel)
+      ggplot(df())+ 
+        geom_point(col=input$dotcol) + 
+        ggtitle(input$title) + xlab(input$x_columns_sel) + ylab(input$y_columns_sel)
     })
+    output$scatter <- renderPlotly({
+      plot()
+    })
+    ns <- NS(id)
+    output$x_columns <- renderUI({
+      selectInput(ns("x_columns_sel"), "Select column to plot on x axis", choices=colnames(df()))
+    })
+    output$y_columns <- renderUI({
+      selectInput(ns("y_columns_sel"), "Select column to plot on y axis", choices=colnames(df()))
+    })
+    
+    return(plot)
+    
   })
 }
 
-
-ScatterApp <- function() {
+#### Demo function of the module #### ----------
+plotScatter_demo <- function() {
+  df <- read.delim("./example_data/L29_vitro_Control_vs_knockdown_diff.txt") %>%
+    mutate(log_pval = -log10(P.Value)) %>%
+    mutate(log_adjpval = -log10(adj.P.Val))
+  
   ui <- fluidPage(
-    scatter_ui("scatter")
+    plotScatter_ui("scatter",df)
   )
   server <- function(input, output, session) {
-    scatter_server("scatter")
+    plotScatter_server("scatter",reactive({
+      df
+    }))
   }
   shinyApp(ui, server)  
 }
 
-ScatterApp()
+plotScatter_demo()

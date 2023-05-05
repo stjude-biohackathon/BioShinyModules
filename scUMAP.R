@@ -77,6 +77,4 @@ scUMAP_demo <- function() {
   shinyApp(ui, server)
 }
 
-scUMAP_demo()
-
 # TODO add documentation

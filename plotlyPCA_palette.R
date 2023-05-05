@@ -75,13 +75,13 @@ plot3DPCA_server <- function(id, df, sample_anno, sample_anno_col) {
     stopifnot(is.reactive(sample_anno))
     stopifnot(is.reactive(sample_anno_col))
 
-    plot <- reactive({
+    PCA3D_plot <- reactive({
       ggplotly_3Dpca(df(), sample_anno(), sample_anno_col(), input$palette, input$title)
     })
     output$plot <- renderPlotly({
-      plot()
+      PCA3D_plot()
     })
-    return(plot)
+    return(PCA3D_plot)
   })
 }
 

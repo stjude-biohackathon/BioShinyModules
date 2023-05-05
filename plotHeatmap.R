@@ -86,7 +86,7 @@ plotHeatmap_server <- function(id, df, sample_anno, sample_anno_col,
   stopifnot(is.reactive(feature_anno_col))
 
   moduleServer(id, function(input, output, session) {
-    plot <- reactive({
+    Heatmap_plot <- reactive({
       plotHeatmap(df(), sample_anno(), sample_anno_col(),
         feature_anno(), feature_anno_col(),
         rowname_switch = TRUE, colname_switch = TRUE,
@@ -94,9 +94,9 @@ plotHeatmap_server <- function(id, df, sample_anno, sample_anno_col,
       )
     })
     output$plot <- renderPlot({
-      plot()
+      Heatmap_plot()
     })
-    return(plot)
+    return(Heatmap_plot)
   })
 }
 

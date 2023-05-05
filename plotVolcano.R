@@ -137,13 +137,13 @@ volcano_server <- function(id, res, feature_col, padj_col, log2fc_col) {
     stopifnot(is.reactive(padj_col))
     stopifnot(is.reactive(log2fc_col))
 
-    plot <- reactive({
+    Volcano_plot <- reactive({
       plotVolcano(res(), feature_col(), padj_col(), log2fc_col())
     })
     output$plot <- renderPlot({
-      plot()
+      Volcano_plot()
     })
-    return(plot)
+    return(Volcano_plot)
   })
 }
 

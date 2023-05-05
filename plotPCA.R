@@ -63,13 +63,13 @@ plotPCA_server <- function(id, df, sample_anno, sample_anno_col) {
     stopifnot(is.reactive(sample_anno))
     stopifnot(is.reactive(sample_anno_col))
 
-    plot <- reactive({
+    PCA_plot <- reactive({
       ggplot_pca(df(), sample_anno(), sample_anno_col())
     })
     output$plot <- renderPlot({
-      plot()
+      PCA_plot()
     })
-    return(plot)
+    return(PCA_plot)
   })
 }
 
