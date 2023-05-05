@@ -49,13 +49,17 @@ scUMAP_server <- function(id, df) {
   stopifnot(is.reactive(df))
 
   moduleServer(id, function(input, output, session) {
-    output$UMAP <- renderPlot({
+    scUMAP_plot <- reactive({
       # Processing data
       df_processed <- process_df(df(), input$parameter)
-
+      
       # UMAP
       DimPlot(df_processed, reduction = "umap", cols = ggsci::pal_igv()(50))
     })
+    output$UMAP <- renderPlot({
+      scUMAP_plot()
+    })
+    return(scUMAP_plot)
   })
 }
 
