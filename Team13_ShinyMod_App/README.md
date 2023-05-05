@@ -11,7 +11,7 @@
 - [X] Histogram
 - [ ] Scatter Plot
 - [X] PCA
-- [ ] Dist
+- [X] Dist
 - [ ] PCA Palette
 - [X] Gene Violin
 - [ ] scUMAP
