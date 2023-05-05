@@ -1,4 +1,5 @@
 # This module was created during the St Jude Bio-Hackathon of May 2023 by the team 13.
+# Author: @
 
 # Documentation
 #' R Shiny module to generate XXX graph
@@ -62,7 +63,7 @@ test_server <- function(id, df, vbl_x, vbl_y) {
   })
 }
 
-#### Demo functionof the module #### ----------
+#### Demo function of the module #### ----------
 # TODO Add here the demo function of the module
 
 test_demo <- function() {
