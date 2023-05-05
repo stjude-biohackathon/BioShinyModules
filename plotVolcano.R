@@ -11,7 +11,7 @@
 #' @param log2fc_col Character. The column name for log2 fole changes. Used for plotting. Default to "FC(log2)".
 #' @returns A Shiny module.
 #' @examples
-#' module.demo()
+#' plotVolcano_demo()
 #### Library needed #### ----------
 library(ggplot2)
 library(shiny)
@@ -118,8 +118,6 @@ plotVolcano <- function(res, feature_col = NULL, padj_col = NULL, log2fc_col = N
 
 
 #### UI function of the module #### ----------
-# TODO Add here the UI function of the module
-
 volcano_ui <- function(id) {
   ns <- NS(id)
   tagList(
@@ -128,8 +126,6 @@ volcano_ui <- function(id) {
 }
 
 #### Server function of the module #### ----------
-# TODO Add here the server function of the module
-
 volcano_server <- function(id, res, feature_col, padj_col, log2fc_col) {
   moduleServer(id, function(input, output, session) {
     stopifnot(is.reactive(res))
@@ -147,8 +143,7 @@ volcano_server <- function(id, res, feature_col, padj_col, log2fc_col) {
   })
 }
 
-#### Demo functionof the module #### ----------
-# TODO Add here the demo function of the module
+#### Demo function of the module #### ----------
 volcano_demo <- function() {
   stat <- read.delim("./example_data/L29_vitro_Control_vs_knockdown_diff.txt")
   res <- stat
