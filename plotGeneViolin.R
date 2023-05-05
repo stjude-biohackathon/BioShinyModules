@@ -10,7 +10,7 @@
 #' @param df_meta Dataframe with the meta data information per sample.
 #' @returns A Shiny module.
 #' @examples
-#' plotGeneViolin_demo()
+#' GeneViolin_demo()
 #### Library needed #### ----------
 library(shiny)
 library(ggplot2)
@@ -33,7 +33,7 @@ library(cowplot)
 #'
 #' @return Violin plot for the gene selected for each level of the column selected
 
-plotGeneViolin <- function(df_expr, df_meta, geneSel, colSel) {
+GeneViolin <- function(df_expr, df_meta, geneSel, colSel) {
   df_expr_sub <- df_expr[which(df_expr[, 1] == geneSel), ]
   df_expr_sub <- as.data.frame(t(df_expr_sub))
   colnames(df_expr_sub)[1] <- geneSel
@@ -82,7 +82,7 @@ plotGeneViolin <- function(df_expr, df_meta, geneSel, colSel) {
 
 
 #### UI function of the module #### ----------
-plotGeneViolin_ui <- function(id) {
+GeneViolin_ui <- function(id) {
   ns <- NS(id)
   tagList(
     textInput(ns("geneSelected"), "Select Gene:", value = "MYC"),
@@ -92,7 +92,7 @@ plotGeneViolin_ui <- function(id) {
 }
 
 #### Server function of the module #### ----------
-plotGeneViolin_server <- function(id, df_expr, df_meta) {
+GeneViolin_server <- function(id, df_expr, df_meta) {
   moduleServer(id, function(input, output, session) {
     GeneViolin_plot <- reactive({
       plotGeneViolin(df_expr, df_meta, input$geneSelected, input$metaSelected)
@@ -111,15 +111,15 @@ plotGeneViolin_server <- function(id, df_expr, df_meta) {
 }
 
 #### Demo function of the module #### ----------
-plotGeneViolin_demo <- function() {
+GeneViolin_demo <- function() {
   df_expr <- read.delim(file = "./example_data/TCGA_CHOL_Expression_PatientID.txt", header = T, check.names = F)
   df_meta <- read.delim(file = "./example_data/TCGA_CHOL_Clinical_PatientID.txt", header = T, check.names = F)
 
   ui <- fluidPage(
-    plotGeneViolin_ui("Violin")
+    GeneViolin_ui("Violin")
   )
   server <- function(input, output, session) {
-    plotGeneViolin_server("Violin", df_expr, df_meta)
+    GeneViolin_server("Violin", df_expr, df_meta)
   }
   shinyApp(ui, server)
 }
