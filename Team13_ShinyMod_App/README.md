@@ -10,7 +10,7 @@
 - [X] Heatmap
 - [X] Histogram
 - [ ] Scatter Plot
-- [ ] PCA
+- [X] PCA
 - [ ] Dist
 - [ ] PCA Palette
 - [X] Gene Violin
