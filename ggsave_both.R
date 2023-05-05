@@ -66,4 +66,34 @@ ggsaveBoth_demo <- function() {
   shinyApp(ui, server)
 }
 
+ggsaveBoth_demo_2 <- function() {
+        load("./example_data/MS_2.rda")
+        df <- df
+        sample_anno <- sample_meta
+        sample_anno_col <- "sampleLabel"
+        feature_anno <- feature_meta
+        feature_anno_col <- "featureName"
+
+        ui <- fluidPage(plotHeatmap_ui("plotHeatmap"),
+                        ggsaveBoth_ui("savehist"))
+        server <- function(input, output, session) {
+                my_plot <- plotHeatmap_server(
+                        "plotHeatmap", reactive({
+                                df
+                        }), reactive({
+                                sample_anno
+                        }), reactive({
+                                sample_anno_col
+                        }),
+                        reactive({
+                                feature_anno
+                        }), reactive({
+                                feature_anno_col
+                        })
+                )
+                ggsaveBoth_server("savehist", my_plot)
+        }
+        shinyApp(ui, server)
+}
+
 # TODO rename the function
