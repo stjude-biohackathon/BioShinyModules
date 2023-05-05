@@ -28,110 +28,110 @@ library(ggplot2)
 #' @return A ggplot histogram with a title
 
 ggplot_truehist <- function(data, breaks = 50, title) {
-        data <- as.numeric(data)
-        ggplot() +
-                aes(data) +
-                geom_histogram(aes(y = after_stat(density)),
-                               bins = breaks,
-                               fill = "cornflowerblue", color = "gray30"
-                ) +
-                labs(title = title) +
-                theme_classic() +
-                theme(
-                        plot.title = element_text(hjust = 0.5),
-                        aspect.ratio = 1
-                )
+  data <- as.numeric(data)
+  ggplot() +
+    aes(data) +
+    geom_histogram(aes(y = after_stat(density)),
+      bins = breaks,
+      fill = "cornflowerblue", color = "gray30"
+    ) +
+    labs(title = title) +
+    theme_classic() +
+    theme(
+      plot.title = element_text(hjust = 0.5),
+      aspect.ratio = 1
+    )
 }
 
 #### UI function of the module #### ----------
 
 plotHist_ui <- function(id) {
-        ns <- NS(id)
-        tagList(
-                numericInput(ns("bins"), "bins", 20, min = 1, step = 1),
-                plotOutput(ns("hist"))
-        )
+  ns <- NS(id)
+  tagList(
+    numericInput(ns("bins"), "bins", 20, min = 1, step = 1),
+    plotOutput(ns("hist"))
+  )
 }
 
 #### Server function of the module #### ----------
 
 plotHist_server <- function(id, df, title = reactive("Histogram")) {
-        stopifnot(is.reactive(df))
-        stopifnot(is.reactive(title))
+  stopifnot(is.reactive(df))
+  stopifnot(is.reactive(title))
 
-        moduleServer(id, function(input, output, session) {
-                output$hist <- renderPlot({
-                        req(is.numeric(df()))
-                        main <- paste0(title(), " [", input$bins, "]")
-                        ggplot_truehist(df(), breaks = input$bins, title = main)
-                        # hist(df(), breaks = input$bins, main = main)
-                })
-        })
+  moduleServer(id, function(input, output, session) {
+    histPlot <- reactive({
+      req(is.numeric(df()))
+      main <- paste0(title(), " [", input$bins, "]")
+      ggplot_truehist(df(), breaks = input$bins, title = main)
+    })
+    
+    output$hist <- renderPlot({
+      histPlot()
+      # hist(df(), breaks = input$bins, main = main)
+    })
+    return(histPlot)
+  })
 }
 
 #### Demo function of the module #### ----------
-load("./example_data/MS_2.rda")
-
 plotHist_demo <- function() {
+  alldata <- load("./example_data/MS_2.rda")
 
-        d <- unlist(df)
-
-        ui <- fluidPage(plotHist_ui("hist"))
-        server <- function(input, output, session) {
-
-                plotHist_server("hist", reactive({d}) )
-        }
-        shinyApp(ui, server)
+  d <- unlist(df)
+  ui <- fluidPage(plotHist_ui("hist"))
+  server <- function(input, output, session) {
+    plotHist_server("hist", reactive({
+      d
+    }))
+  }
+  shinyApp(ui, server)
 }
-
-source("csvImport.R")
+plotHist_demo ()
 plotHist_demo_1 <- function() {
-        ui <- fluidPage(
-                sidebarLayout(
-                        sidebarPanel(
-                                csvImport_ui("datafile", "User data (.csv format)"),
-                        ),
-                        mainPanel(
-                                plotHist_ui("hist")
-                        )
-                )
-        )
+  source("dataImport.R")
+  ui <- fluidPage(
+    sidebarLayout(
+      sidebarPanel(
+        dataImport_ui("datafile", "User data (.csv format)"),
+      ),
+      mainPanel(
+        plotHist_ui("hist")
+      )
+    )
+  )
 
-        server <- function(input, output, session) {
-                data <- csvImport_server("datafile", stringsAsFactors = TRUE)
+  server <- function(input, output, session) {
+    data <- dataImport_server("datafile")
+    df <- reactive({
+      data() %>%
+        unlist()
+    })
 
-                df <- reactive({
-                        data() %>%
-                                unlist()
-                })
-
-                plotHist_server("hist", df)
-        }
-        shinyApp(ui, server)
+    plotHist_server("hist", df)
+  }
+  shinyApp(ui, server)
 }
 
-source("selectVar.R")
 plotHist_demo_2 <- function() {
-        ui <- fluidPage(
-                sidebarLayout(
-                        sidebarPanel(
-                                csvImport_ui("datafile", "User data (.csv format)"),
-                                selectVar_ui("var", "Choose a column"),
-                        ),
-                        mainPanel(
-                                plotHist_ui("hist")
-                        )
-                )
-        )
+  source("dataImport.R")
+  source("selectVar.R")
+  ui <- fluidPage(
+    sidebarLayout(
+      sidebarPanel(
+        dataImport_ui("datafile", "User data"),
+        selectVar_ui("var", "Choose a column"),
+      ),
+      mainPanel(
+        plotHist_ui("hist")
+      )
+    )
+  )
 
-        server <- function(input, output, session) {
-                data <- csvImport_server("datafile", stringsAsFactors = TRUE)
-                var <- selectVar_server("var", data, filter = is.numeric)
-                plotHist_server("hist", var)
-        }
-        shinyApp(ui, server)
+  server <- function(input, output, session) {
+    data <- dataImport_server("datafile")
+    var <- selectVar_server("var", data, filter = is.numeric)
+    plotHist_server("hist", var)
+  }
+  shinyApp(ui, server)
 }
-
-# TODO list for this template
-# TODO add minimal data for testing
-# TODO csv import doesn't seems to work with .rda
