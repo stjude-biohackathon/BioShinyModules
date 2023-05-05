@@ -98,9 +98,15 @@ module_server <- function(id) {
   moduleServer(id, function(input, output, session){
     output$region <- renderText(paste0("The region you have selected is: ", input$coordinates, " and the samples of interest are: ", input$intSamples))
     
-    output$plot <- renderPlot({
+    plot <- reactive({
       plotDMR(data, input$coordinates, input$chrCol, input$startCol, input$endCol, input$intSamples, title = input$title)
     })
+    
+    output$plot <- renderPlot({
+      plot()
+    })
+
+    return(plot)
   })
 }
 
