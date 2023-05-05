@@ -40,7 +40,7 @@ plotScatter_server <- function(id, df) {
       req(input$x_columns_sel)
       print(input$y_columns_sel)
       print(input$x_columns_sel)
-      ggplot(df())+ 
+      ggplot(df(), aes(x=!!sym(input$x_columns_sel), y=!!sym(input$y_columns_sel))) + #Crashed R on my side
         geom_point(col=input$dotcol) + 
         ggtitle(input$title) + xlab(input$x_columns_sel) + ylab(input$y_columns_sel)
     })
