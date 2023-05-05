@@ -37,11 +37,6 @@ ggsaveBoth_server <- function(id, my_plot) {
       },
       content = function(file) {
         ggsave(filename = file, plot = my_plot(), width = input$var1, height = input$var2, device = input$var3)
-        # if(input$var3 == "png")
-        #         png(file) # open the png device
-        # else
-        #         pdf(file) # open the pdf device
-        # dev.off()
       }
     )
   })
@@ -60,8 +55,8 @@ ggsaveBoth_demo <- function() {
   server <- function(input, output, session) {
     data <- dataImport_server("datafile")
     df <- reactive({
-      data() %>%
-        unlist()
+      print(summary(data()))
+      data()
     })
     my_plot <- plotHist_server("hist", df)
 
