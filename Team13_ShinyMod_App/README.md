@@ -10,5 +10,15 @@
 - [ ] Violin
 - [ ] Heatmap
 - [ ] Histogram
-- [ ] 
-- [ ] 
+- [ ] Scatter Plot
+- [ ] PCA
+- [ ] Dist
+- [ ] PCA Palette
+- [ ] Gene Violin
+- [ ] scUMAP
+- [ ] scViolin
+- [ ] scTSNE
+- [ ] scGOI
+- [ ] scRidge
+- [ ] scDoHeatmap
+- [ ] Survival KMplot
