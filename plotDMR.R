@@ -8,7 +8,7 @@
 #' @param data A dataframe.
 #' @returns A Shiny module.
 #' @examples
-#' module.demo()
+#' DMR_demo()
 #### Library needed #### ----------
 library(shiny)
 library(ggplot2)
@@ -31,7 +31,7 @@ library(stringr)
 #' @return plot
 #' @export pdf
 
-#### plotting function of the module #### ----------
+# Plotting function of the module
 plotDMR <- function(data, coordinates, chrCol, startCol, endCol, intSamples, title = "") {
   # get the sample names (column names of data matrix satisfying the following regular expression)
   samples <- str_extract(colnames(data), "............_R0.C0.") # recognizes the sentrix ID format
@@ -72,32 +72,32 @@ plotDMR <- function(data, coordinates, chrCol, startCol, endCol, intSamples, tit
     ylab("Methylation Value") +
     labs(title = title) +
     theme_bw()
-  g
+  return(g)
 }
 
 #### UI function of the module #### ----------
-module_ui <- function(id) {
+DMR_ui <- function(id) {
   ns <- NS(id)
   tagList(
     titlePanel("Interactive DMR plot"),
-    textInput(NS(id, "coordinates"), "What genomic coordinates would you like to view? Please use format chrX:start-stop ", value = "chr16:17562418-17565190"),
-    textInput(NS(id, "chrCol"), "What is the name of the column with the chromosome information? (e.g. chr16)", value = "CpG_chrm"),
-    textInput(NS(id, "startCol"), "What is the name of the column with the start positions? (e.g. 17562418)", value = "CpG_beg"),
-    textInput(NS(id, "endCol"), "What is the name of the column with the end positions? (e.g. 17565190)", value = "CpG_end"),
-    textInput(NS(id, "intSamples"), "Are there samples of interest to highlight (e.g. 203866380012_R06C01, 204873630063_R08C01)?", value = "203866380012_R06C01, 204873630063_R08C01"),
-    textInput(NS(id, "title"), "What is the title of the plot?", value = "DMR plot at XYLT1"),
-    verbatimTextOutput(NS(id, "region")),
-    plotOutput(NS(id, "plot"))
+    textInput(ns("coordinates"), "What genomic coordinates would you like to view? Please use format chrX:start-stop ", value = "chr16:17562418-17565190"),
+    textInput(ns("chrCol"), "What is the name of the column with the chromosome information? (e.g. chr16)", value = "CpG_chrm"),
+    textInput(ns("startCol"), "What is the name of the column with the start positions? (e.g. 17562418)", value = "CpG_beg"),
+    textInput(ns("endCol"), "What is the name of the column with the end positions? (e.g. 17565190)", value = "CpG_end"),
+    textInput(ns("intSamples"), "Are there samples of interest to highlight (e.g. 203866380012_R06C01, 204873630063_R08C01)?", value = "203866380012_R06C01, 204873630063_R08C01"),
+    textInput(ns("title"), "What is the title of the plot?", value = "DMR plot at XYLT1"),
+    verbatimTextOutput(ns("region")),
+    plotOutput(ns("plot"))
   )
 }
 
 #### Server function of the module #### ----------
-module_server <- function(id) {
+DMR_server <- function(id, df) {
   moduleServer(id, function(input, output, session) {
     output$region <- renderText(paste0("The region you have selected is: ", input$coordinates, " and the samples of interest are: ", input$intSamples))
 
     DMR_plot <- reactive({
-      plotDMR(data, input$coordinates, input$chrCol, input$startCol, input$endCol, input$intSamples, title = input$title)
+      plotDMR(df(), input$coordinates, input$chrCol, input$startCol, input$endCol, input$intSamples, title = input$title)
     })
 
     output$plot <- renderPlot({
@@ -109,14 +109,15 @@ module_server <- function(id) {
 }
 
 #### Demo function of the module #### ----------
-data <- fread("./example_data/autosomes.beta.txt.sorted.chr16") # example data
-
-DMRplot <- function() {
+DMR_demo <- function() {
+  df <- fread("./example_data/autosomes.beta.txt.sorted.chr16") # example data
   ui <- fluidPage(
-    module_ui("dmrplot")
+    DMR_ui("dmrplot")
   )
   server <- function(input, output, session) {
-    module_server("dmrplot")
+    DMR_server("dmrplot", reactive({
+      df
+    }))
   }
   shinyApp(ui, server)
 }
