@@ -47,7 +47,7 @@ feature_anno <- feature_meta
 feature_anno_col <- "featureName"
 
 ## Histogram
-histogram_df <- unlist(df)
+histogram_df <- unlist(heatmap_df)
 
 ## DRM Data
 DMR_data <- fread("autosomes.beta.txt.sorted.chr16.txt")
@@ -484,6 +484,54 @@ plotHeatmap_server <- function(id, df, sample_anno, sample_anno_col,
   })
 }
 
+
+####----Histogram----####
+
+ggplot_truehist <- function(data, breaks = 50, title) {
+  data <- as.numeric(data)
+  ggplot() +
+    aes(data) +
+    geom_histogram(aes(y = after_stat(density)),
+                   bins = breaks,
+                   fill = "cornflowerblue", color = "gray30"
+    ) +
+    labs(title = title) +
+    theme_classic() +
+    theme(
+      plot.title = element_text(hjust = 0.5),
+      aspect.ratio = 1
+    )
+}
+
+plotHist_ui <- function(id) {
+  ns <- NS(id)
+  tagList(
+    sidebarPanel(
+      numericInput(NS(id,"bins"), "bins", 20, min = 1, step = 1)
+    ),
+    mainPanel(
+      withSpinner(jqui_resizable(plotOutput(NS(id,"hist"))), type = 6)
+    )
+  )
+}
+
+plotHist_server <- function(id, df, title = reactive("Histogram")) {
+  stopifnot(is.reactive(df))
+  stopifnot(is.reactive(title))
+  
+  moduleServer(id, function(input, output, session) {
+    hist_plot <- reactive({
+      req(is.numeric(df()))
+      main <- paste0(title(), " [", input$bins, "]")
+      ggplot_truehist(df(), breaks = input$bins, title = main)
+    })
+    
+    output$hist <- renderPlot({
+      hist_plot()
+    })
+  })
+}
+
 ####----UI and Server----####
 
 ui <- 
@@ -529,6 +577,13 @@ ui <-
                           plotHeatmap_ui("plotHeatmap")
                         )
                       )
+             ),
+             tabPanel("Histogram",
+                      fluidPage(
+                        mainPanel(
+                          plotHist_ui("hist")
+                        )
+                      )
              )
   )
 
@@ -537,12 +592,12 @@ server <- function(input, output, session) {
   module_volcano_server("volcano", data = L29_Vitro_Diff)
   volcano_server("x", L29_Vitro_Diff, feature_col = "gene",
                  padj_col = "adj.P.Val", log2fc_col = "logFC")
-  
   volcanoEnh_server("VolcanoEnh",data = L29_Vitro_Diff)
   mitoCov_server("mtCoverage",combo)
   plotDMR_server("DMRmethPlot",DMR_data)
   plotHeatmap_server("plotHeatmap", reactive({heatmap_df}), reactive({sample_anno}), reactive({sample_anno_col}),
                      reactive({feature_anno}), reactive({feature_anno_col}))
+  plotHist_server("hist", reactive({histogram_df}))
 }
 
 
