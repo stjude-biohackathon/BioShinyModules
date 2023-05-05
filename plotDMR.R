@@ -22,7 +22,7 @@ library(stringr)
 #### Function needed to work #### ----------
 #' Differentially methylated region (DMR) plot
 #'
-#' @param data A data frame of B-values from DNA methylation array (eg. Illumina EPIC 850k)
+#' @param data A data frame of B-values from DNA methylation array (eg. Illumina EPIC 850k); must be in ascending order by genomic position
 #' @param coordinates Genomic coordinates to plot (e.g. chr16:17562418-17565190)
 #' @param chrCol The name of the column containing the chromosome (e.g. chr16)
 #' @param startCol The name of the column containing the starting/beginning CpG coordinate (e.g. 17562418)
