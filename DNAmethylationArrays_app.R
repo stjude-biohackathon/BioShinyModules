@@ -97,93 +97,88 @@ DNAmethylationServer <- function( input , output , session ){
                                                       OverlappingRegionCoord = as.data.frame( findOverlaps( CpG_gr , SearchRegion_gr ) )
                                                       
                                                       OverlappingRegions_CpGinformation = as.data.frame( CpG_gr [  OverlappingRegionCoord$queryHits  ] )
-                                                      if( nrow(OverlappingRegions_CpGinformation) > 0 ){
-                                                            return( OverlappingRegions_CpGinformation )
-                                                      }else{
-                                                        return( "No overlaps found" )
-                                                      }                      
+                                                      
+                                                      return(OverlappingRegions_CpGinformation)                 
                                                     })
                                       
-
+                                      output$view = renderTable({
+                                                                        get_overlaps_output = get_overlaps()
+                                                                        if( nrow(get_overlaps_output) == 0 ){
+                                                                          return( "No overlaps found" )
+                                                                        } 
+                                                                        else{
+                                                                          get_overlaps() %>% head(n=3)
+                                                                        }
+                                                               })
+                                      
                                       get_plotData <- eventReactive( input$submit_click , {
-                                              
-                                                                OverlappingRegions_CpGinformation = get_overlaps()                  
-                                            
-                                                                if( OverlappingRegions_CpGinformation != "No overlaps found" ){
-                                                                          
-                                                                          phenoData_local = phenoData()
-                                                                          phenoData_filtered = phenoData_local %>% dplyr::select( Sample_ID , input$pheno_colorBy ) %>% dplyr::rename( "SampleID" = "Sample_ID" )
-                                                                          
-                                                                          if( input$pheno_colorBy_broadCategory == "Specific Column from the phenotype" ){
-                                                                            
-                                                                            methPlotData = OverlappingRegions_CpGinformation %>% 
-                                                                                                  pivot_longer( cols = -c("seqnames","start","end","width","strand","probeID") , names_to = "SampleID" , values_to = "BetaValues") %>%
-                                                                                                  mutate( SampleID = gsub("^X","",SampleID) ) %>%
-                                                                                                  left_join( phenoData_filtered ) %>%
-                                                                                                  mutate( colorGroup = !!rlang::sym(input$pheno_colorBy) ) %>%
-                                                                                                  mutate( chrBase = paste0( seqnames , ":" , start , "-" , end ) )
-                                                                          }else if( input$pheno_colorBy_broadCategory == "IndividualSamples" ){
-                                                                            methPlotData = OverlappingRegions_CpGinformation %>% 
-                                                                                                      pivot_longer( cols = -c("seqnames","start","end","width","strand","probeID") , names_to = "SampleID" , values_to = "BetaValues") %>%
-                                                                                                      mutate( SampleID = gsub("^X","",SampleID) ) %>%
-                                                                                                      mutate( colorGroup = if_else( SampleID %in% input$samplesToGroup , "Sample-of-Interest" , "Others" ) ) %>%
-                                                                                                      mutate( chrBase = paste0( seqnames , ":" , start , "-" , end ) )
-                                                                          }
-                                                               return(methPlotData)
-                                                                        
-                                                            }
-                                                                
-                                                                
-                                                          })
-                                      
-                                     output$view = renderTable({
-                                                                    if( get_overlaps() != "No overlaps found" ){
-                                                                          get_plotData() %>% head(n=3)
-                                                                    } 
-                                                                    else{
-                                                                      return( "No overlaps found" )
-                                                                    }
-                                                                 })
                                         
-                                     
-                                     output$methLinePlot = renderPlot({
-                                                                plotData = get_plotData()
-                                                                 
-                                                                if( get_overlaps() != "No overlaps found" ){
-
-                                                                          if( input$pheno_colorBy_broadCategory == "Specific Column from the phenotype"  ){
-                                                                            return(NULL)
-                                                                          }else{
+                                                OverlappingRegions_CpGinformation = get_overlaps()                  
+                                                
+                                                if( nrow(OverlappingRegions_CpGinformation) > 0  ){
+                                                  
+                                                  phenoData_local = phenoData()
+                                                  phenoData_filtered = phenoData_local %>% dplyr::select( Sample_ID , input$pheno_colorBy ) %>% dplyr::rename( "SampleID" = "Sample_ID" )
+                                                  
+                                                  if( input$pheno_colorBy_broadCategory == "Specific Column from the phenotype" ){
+                                                    
+                                                    methPlotData = OverlappingRegions_CpGinformation %>% 
+                                                      pivot_longer( cols = -c("seqnames","start","end","width","strand","probeID") , names_to = "SampleID" , values_to = "BetaValues") %>%
+                                                      mutate( SampleID = gsub("^X","",SampleID) ) %>%
+                                                      left_join( phenoData_filtered ) %>%
+                                                      mutate( colorGroup = !!rlang::sym(input$pheno_colorBy) ) %>%
+                                                      mutate( chrBase = paste0( seqnames , ":" , start , "-" , end ) )
+                                                  }else if( input$pheno_colorBy_broadCategory == "IndividualSamples" ){
+                                                    methPlotData = OverlappingRegions_CpGinformation %>% 
+                                                      pivot_longer( cols = -c("seqnames","start","end","width","strand","probeID") , names_to = "SampleID" , values_to = "BetaValues") %>%
+                                                      mutate( SampleID = gsub("^X","",SampleID) ) %>%
+                                                      mutate( colorGroup = if_else( SampleID %in% input$samplesToGroup , "Sample-of-Interest" , "Others" ) ) %>%
+                                                      mutate( chrBase = paste0( seqnames , ":" , start , "-" , end ) )
+                                                  }
+                                                  return(methPlotData)
+                                                  
+                                                }
+                                          }
+                                      )
+                                          
                                       
-                                                                          p = ggplot( plotData , aes( x = chrBase , y = BetaValues  ) ) + 
-                                                                            geom_line(aes(group = SampleID,  linetype = colorGroup , colour = colorGroup ) ) +
-                                                                            scale_colour_manual(values = setNames( colorChoices[ 1:length(unique(plotData$colorGroup))] , c("Sample-of-Interest","Others") ) )+
-                                                                            scale_linetype_manual(values = setNames( c("solid","dashed") , c("Sample-of-Interest","Others") ) ) +
-                                                                            coord_cartesian(ylim = c(0,1)) + 
-                                                                            theme_base() +
-                                                                            labs( x = "" , y = "Beta values" , title = input$Region_Locus ) + 
-                                                                            theme( legend.position = "top", legend.title = element_blank() , axis.text.x = element_text( angle = 45 , vjust = 1 , hjust = 1 ) )
-                                                                          
-                                                                          return(p) }
-                                                                }
-                                     })
-                                     
-                                     output$methBoxPlot = renderPlot({
-                                       
-                                       plotData = get_plotData()
-                                       
-                                       if( get_overlaps() != "No overlaps found" ){
-                                         
-                                       ggplot( plotData , aes( x = chrBase , y = BetaValues , fill = colorGroup  ) ) + 
-                                         geom_boxplot() +
-                                         scale_fill_manual(values = setNames( colorChoices[ 1:length(unique(plotData$colorGroup))] , unique(plotData$colorGroup) ) ) +
-                                         coord_cartesian(ylim = c(0,1)) + 
-                                         theme_base() +
-                                         labs( x = "" , y = "Beta values" , title = input$Region_Locus ) + 
-                                         theme( legend.position = "top", legend.title = element_blank() , axis.text.x = element_text( angle = 45 , vjust = 1 , hjust = 1 ) )
-                                     
-                                       }                                         
-                                    })
+                                      output$methLinePlot = renderPlot({
+                                                  plotData = get_plotData()
+  
+                                                if( nrow(plotData) > 0 ){
+                                                 
+                                                  p = ggplot( plotData , aes( x = chrBase , y = BetaValues  ) ) + 
+                                                    geom_line(aes(group = SampleID,  linetype = colorGroup , colour = colorGroup ) ) +
+                                                    scale_colour_manual(values = setNames( colorChoices[ 1:length(unique(plotData$colorGroup))] , c("Sample-of-Interest","Others") ) )+
+                                                    scale_linetype_manual(values = setNames( c("solid","dashed") , c("Sample-of-Interest","Others") ) ) +
+                                                    coord_cartesian(ylim = c(0,1)) + 
+                                                    theme_base() +
+                                                    labs( x = "" , y = "Beta values" , title = input$Region_Locus ) + 
+                                                    theme( legend.position = "top", legend.title = element_blank() , axis.text.x = element_text( angle = 45 , vjust = 1 , hjust = 1 ) )
+                                                  
+                                                  return(p)
+                                                 }
+
+                                                })
+                                                
+                                      output$methBoxPlot = renderPlot({
+                                                  
+                                                  plotData = get_plotData()
+                                                  
+                                                  if( nrow(plotData) > 0 ){
+                                                  
+                                                    p = ggplot( plotData , aes( x = chrBase , y = BetaValues , fill = colorGroup  ) ) + 
+                                                              geom_boxplot() +
+                                                              scale_fill_manual(values = setNames( colorChoices[ 1:length(unique(plotData$colorGroup))] , unique(plotData$colorGroup) ) ) +
+                                                              coord_cartesian(ylim = c(0,1)) + 
+                                                              theme_base() +
+                                                              labs( x = "" , y = "Beta values" , title = input$Region_Locus ) + 
+                                                              theme( legend.position = "top", legend.title = element_blank() , axis.text.x = element_text( angle = 45 , vjust = 1 , hjust = 1 ) )
+                                                            
+                                                    return(p)        
+                                                  }
+                                                }) 
+                                        
 }
 
 shinyApp( ui = DNAmethylationUI , server = DNAmethylationServer )
