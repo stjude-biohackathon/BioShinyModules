@@ -5,7 +5,6 @@
 
 library( tidyverse )
 library( shiny )
-library( wesanderson )
 library( MetBrewer )
 library( qqman )
 
