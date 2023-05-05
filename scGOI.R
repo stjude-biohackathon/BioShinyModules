@@ -49,15 +49,19 @@ scGOI_server <- function(id, df) {
   stopifnot(is.reactive(df))
 
   moduleServer(id, function(input, output, session) {
-    output$GOIcluster <- renderPlot({
+    plot <- reactive({
       # Processing data
       df_processed <- process_df(df(), input$parameter)
-
+      
       GeneSel <- toupper(input$geneSelect)
-
+      
       # Feature plot
       FeaturePlot(df_processed, features = GeneSel, cols = c("grey", "red"), order = T)
     })
+    output$GOIcluster <- renderPlot({
+      plot()
+    })
+    return(plot)
   })
 }
 
@@ -74,7 +78,5 @@ scGOI_demo <- function() {
   }
   shinyApp(ui, server)
 }
-
-scGOI_demo()
 
 # TODO add documentation
