@@ -409,6 +409,81 @@ plotDMR_server <- function(id, data) {
   })
 }
 
+
+####----Heatmap----####
+
+plotHeatmap <- function(df, sample_anno, sample_anno_col,
+                        feature_anno, feature_anno_col,
+                        rowname_switch = TRUE, colname_switch = TRUE, main = "Heatmap") {
+  
+  # select annotation columns for sample meta and feature meta
+  sample_anno <- sample_anno[sample_anno_col] # data.frame
+  feature_anno <- feature_anno[, feature_anno_col] # character vector
+  
+  
+  # draw hm
+  pheatmap(
+    df,
+    annotation_col = sample_anno,
+    labels_row = feature_anno,
+    annotation_names_col = FALSE,
+    angle_col = 45,
+    scale = "row",
+    show_rownames = rowname_switch,
+    show_colnames = colname_switch,
+    # cluster_rows = T,cluster_cols = T,
+    # cellwidth = 30.0,
+    # fontsize_row = 8,
+    # fontsize_col = 8,
+    # treeheight_col = 25,
+    # treeheight_row = 25,
+    # fontsize_number = 6,
+    main = main
+  )
+}
+
+plotHeatmap_ui <- function(id) {
+  ns <- NS(id)
+  tagList(
+    sidebarPanel(
+      fluidRow(
+        column(6,
+               checkboxInput(NS(id,"ShowRowNames"),"Show Row Names", value = T)
+               ),
+        column(6,
+               checkboxInput(NS(id,"ShowColNames"),"Show Column Names", value = T)
+        )
+      )
+    ),
+    mainPanel(
+      withSpinner(jqui_resizable(plotOutput(ns("plot"))), type = 6)
+    )
+  )
+}
+
+plotHeatmap_server <- function(id, df, sample_anno, sample_anno_col,
+                               feature_anno, feature_anno_col) {
+  stopifnot(is.reactive(df))
+  stopifnot(is.reactive(sample_anno))
+  stopifnot(is.reactive(sample_anno_col))
+  stopifnot(is.reactive(feature_anno))
+  stopifnot(is.reactive(feature_anno_col))
+  
+  moduleServer(id, function(input, output, session) {
+    Heatmap_plot <- reactive({
+      plotHeatmap(df(), sample_anno(), sample_anno_col(),
+                  feature_anno(), feature_anno_col(),
+                  rowname_switch = input$ShowRowNames, colname_switch = input$ShowColNames,
+                  main = paste("Heatmap: ", dim(df())[1], "features", dim(df())[2], "samples")
+      )
+    })
+    output$plot <- renderPlot({
+      Heatmap_plot()
+    })
+    #return(Heatmap_plot)
+  })
+}
+
 ####----UI and Server----####
 
 ui <- 
@@ -447,6 +522,13 @@ ui <-
                           plotDMR_ui("DMRmethPlot")
                         )
                       )
+             ),
+             tabPanel("Heatmap",
+                      fluidPage(
+                        mainPanel(
+                          plotHeatmap_ui("plotHeatmap")
+                        )
+                      )
              )
   )
 
@@ -459,6 +541,8 @@ server <- function(input, output, session) {
   volcanoEnh_server("VolcanoEnh",data = L29_Vitro_Diff)
   mitoCov_server("mtCoverage",combo)
   plotDMR_server("DMRmethPlot",DMR_data)
+  plotHeatmap_server("plotHeatmap", reactive({heatmap_df}), reactive({sample_anno}), reactive({sample_anno_col}),
+                     reactive({feature_anno}), reactive({feature_anno_col}))
 }
 
 
