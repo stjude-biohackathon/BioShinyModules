@@ -12,7 +12,7 @@
 - [ ] Scatter Plot
 - [X] PCA
 - [X] Dist
-- [ ] PCA Palette
+- [X] PCA Palette
 - [X] Gene Violin
 - [ ] scUMAP
 - [ ] scViolin
