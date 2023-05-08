@@ -1,59 +1,61 @@
 # Organisation of what we want to do during the Hackathon
 
 ## Teaser
+
 Please help us modify and implement this file, with your ideas, expectation, questions, ...
 
 ## What plot types do we want to show?
-- [Max] Volcano
-- [KELLY] Violin
+
+- [X] Volcano (Max)
+- [X] Violin (Kelly)
 - [ ] GGplot
 - [ ] Karyotype
 - [ ] Pedigree
 - [ ] Timeline
 - [ ] Gene-specific expression across tSNE clusters
-- [KELLY ] Single-cell mtDNA/mitochondrial transcriptome coverage
+- [X] Single-cell mtDNA/mitochondrial transcriptome coverage (KELLY)
 - [ ] RNAseq
-- [Yaseswini Neelamraju] Survival
-- [Suzy ] Box
-- [Max] Heatmap
-- [Lawryn] Scatterplots (general) and try adding plotly
+- [X] Survival (Yaseswini Neelamraju)
+- [X] Box (Suzy)
+- [X] Heatmap (Max)
+- [X] Scatterplots (general) and try adding plotly (Lawryn)
 - [ ] Plotly
-- [Yaseswini Neelamraju; Christy LaFlamme] DNA methylation region plots/browsers
-- [Yaseswini Neelamraju ] Manhattan plot
-- [Max] sample-to-sample distance plot
-- [Max] Histogram
-- [Max] PCA plot
-- [Lawryn] 3D interactive PCA plot
+- [X] DNA methylation region plots/browsers (Yaseswini Neelamraju; Christy LaFlamme)
+- [X] Manhattan plot (Yaseswini Neelamraju)
+- [X] sample-to-sample distance plot (Max)
+- [X] Histogram (Max)
+- [X] PCA plot (Max)
+- [X] 3D interactive PCA plot (Lawryn)
 
 
 ## What modules do we have so far? List under each one what cusotmization options we want
-- [] Heatmap
-       - color selection
-       - changing font sizes
-       - bars at top and side for meta data
-       - zoom in
-       - output table of selection in window
-- [] Plotly Scatterplot
-        - add linear regression line
-        - selection of points specific color (by user input, by pathway etc)
-        - adjusting x and y axis
-- [] plotDist
-- [] plot Volcano
-        - set p value cutoff interactively
-        - set fold change interactively
-        - up one color
-        - down one color
-        - color palettes
-        - label top points
-        - 
-- [] Histogram
-        - Add color picker
-        - Different bars different color or gradient
-- [] plot PCA
-        - Add color picker
-        - Shapes
-        - selection of points
-        - 
+
+- Heatmap
+  - color selection
+  - changing font sizes
+  - bars at top and side for meta data
+  - zoom in
+  - output table of selection in window
+- Plotly Scatterplot
+  - add linear regression lin
+  - selection of points specific color (by user input, by pathway etc)
+  - adjusting x and y axis
+- plotDist
+- plot Volcano
+  - set p value cutoff interactively
+  - set fold change interactively
+  - up one color
+  - down one color
+  - color palettes
+  - label top points
+- Histogram
+  - Add color picker
+  - Different bars different color or gradient
+- plot PCA
+  - Add color picker
+  - Shapes
+  - selection of points
+
 ## What general options do we want for each plot type? (Customization options, overlay options, export options)
 
 ## What file/object types do we want to be able to use?
@@ -69,9 +71,11 @@ There are two test data can be used, located in [example_data](/example_data). O
 The second data [L29_vitro_Control_vs_knockdown_diff](/example_data/L29_vitro_Control_vs_knockdown_diff.txt) is a statistic result table, containing p-value and log2FC, among other variables. Could be the output from DESeq2 or other stat package. 
 
 ## What general stucture should we go for ?
+
 - Add tooltips to ggplot for plotly informations
 
 ## What role does everyone want to have?
+
 - Project manager
 - Clean up person
 - Tester
