@@ -81,13 +81,13 @@ kpAddCytobandsCust <- function (karyoplot, color.table = NULL, color.schema = c(
   invisible(karyoplot)
 }
 
-plotKaryotypeCust <- function(df, chrtoplot, cytobands=NULL, labels=NULL) {
+plotKaryotypeCust <- function(df, chrtoplot, cytobands=NULL, plottype=1) {
   print(df)
   print(chrtoplot)
   # Remove NA value from cytobands
   cytobands = cytobands[!is.na(cytobands$start) & !is.na(cytobands$end) & !is.na(cytobands$chr),c("chr","start","end","gieStain")]
   plotKaryotype(genome = df, chromosomes = chrtoplot,
-                cytobands = cytobands, plot.type = 1,ideogram.plotter=kpAddCytobandsCust)
+                cytobands = cytobands, plot.type = plottype,ideogram.plotter=kpAddCytobandsCust)
 }
 
 
@@ -100,6 +100,7 @@ Karyotype_ui <- function(id) {
   
   tagList(
     plotOutput(ns("plot")),
+    selectInput(ns("plottype"),"Choose plot type", choices=seq(1,7)),
     uiOutput(ns("chrSelection"))
   )
   
@@ -108,7 +109,7 @@ Karyotype_ui <- function(id) {
 #### Server function of the module #### ----------
 # TODO Add here the server function of the module
 
-Karyotype_server <- function(id, df_geno, df_cyto, df_label) {
+Karyotype_server <- function(id, df_geno, df_cyto) {
   moduleServer(id, function(input, output, session) {
     ns <- NS(id)
     output$chrSelection <- renderUI({
@@ -121,7 +122,7 @@ Karyotype_server <- function(id, df_geno, df_cyto, df_label) {
     
     karyotype_plot <- reactive({
       req(input$chrSelected)
-      plotKaryotypeCust(df_geno(), input$chrSelected, df_cyto())
+      plotKaryotypeCust(df_geno(), input$chrSelected, df_cyto(), input$plottype )
     })
     
     output$plot <- renderPlot({
@@ -140,9 +141,10 @@ Karyotype_demo <- function() {
   df_geno <- read.table("./example_data/genome_list.txt", header = TRUE) # example data
   df_cytobands <- read.delim("./example_data/cytobands.txt", header = TRUE) # example data
   df_cytobands$gieStain <- revalue(df_cytobands$Type,c("MicroSat" = "stalk","SNP" = "gpos100","Genes" = "acen"))
+
   ui <- fluidPage(Karyotype_ui("Karyotype"))
   server <- function(input, output, session) {
-    Karyotype_server("Karyotype", reactive({df_geno}), reactive({df_cytobands}), NULL)
+    Karyotype_server("Karyotype", reactive({df_geno}), reactive({df_cytobands}))
   }
   shinyApp(ui, server)
 }
