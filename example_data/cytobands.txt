@@ -1,0 +1,57 @@
+Type	Study	Breed	MethodStat	Nb	Traits	chr	MarkerS	MarkerE	name	start	end
+MicroSat	Chase et al 2004	CEP	Additive genetic mixed model	286	NO	1	FH2598	FH2598	Chase 2004	109126561	109126895
+MicroSat	Chase et al 2004	CEP	Additive genetic mixed model	286	NO	1	FH3413	REN136G19	Chase 2004	21746216	22789716
+MicroSat	Todhunter et al 2005	LR, LA, LRxLA	QTL GLM	152	NO,L	4	FH2457	AHT103	Todhunter 2005	72141556	85027850
+MicroSat	Todhunter et al 2005	LR, LA, LRxLA	QTL GLM	152	CP	9	REN177B24	REN278L10	Todhunter 2005	44817036	50790920
+MicroSat	Todhunter et al 2005	LR, LA, LRxLA	QTL GLM	152	NO,Hi	10	FH2422	C10.16	Todhunter 2005		
+MicroSat	Todhunter et al 2005	LR, LA, LRxLA	QTL GLM	152	DI,L,Lo	11	FH2096	AHT137	Todhunter 2005	2826208	2826344
+MicroSat	Todhunter et al 2005	LR, LA, LRxLA	QTL GLM	152	CP,NO,Lo,R	16	REN292N24	C16.147	Todhunter 2005	32952594	32952765
+MicroSat	Todhunter et al 2005	LR, LA, LRxLA	QTL GLM	152	NO,Hi,L,DLS,R	16	FH2175	REN130B10	Todhunter 2005	29569033	31851438
+MicroSat	Todhunter et al 2005	LR, LA, LRxLA	QTL GLM	152	DLS,Hi,Lo,R	20	FH2158	REN193A22	Todhunter 2005	37242584	44058623
+MicroSat	Todhunter et al 2005	LR, LA, LRxLA	QTL GLM	152	DLS,Hi,L	22	FH2538	C22.279	Todhunter 2005	49604583	57235880
+MicroSat	Todhunter et al 2005	LR, LA, LRxLA	QTL GLM	152	NO,Hi,CP	25	FH2006	FH2318	Todhunter 2005	11156703	11157045
+MicroSat	Todhunter et al 2005	LR, LA, LRxLA	QTL GLM	152	NO,R,Hi,CP	29	REN45F03	FH2328	Todhunter 2005	16721839	25239916
+MicroSat	Todhunter et al 2005	LR, LA, LRxLA	QTL GLM	152	NO,Lo,L,DLS,CP	29	FH2328	FH2609	Todhunter 2005	2214579	16721651
+MicroSat	Todhunter et al 2005	LR, LA, LRxLA	QTL GLM	152	DI,R,CP	30	REN105i08	REN248F14	Todhunter 2005	23515406	23515603
+MicroSat	Todhunter et al 2005	LR, LA, LRxLA	QTL GLM	152	DLS,Hi	35	REN214H22	REN01G01	Todhunter 2005	11181731	19558632
+MicroSat	Todhunter et al 2005	LR, LA, LRxLA	QTL GLM	152	CP	37	CE3707	CE3711	Todhunter 2005		
+MicroSat	Marschall & Distl 2007	BA	Linkage analysis	459	FCI	1	REN192P12	REN192P12	Marschall 2007	80700761	80700914
+MicroSat	Marschall & Distl 2007	BA	Linkage analysis	459	FCI	3	FH3259	FH2302	Marschall 2007	86387883	88546147
+MicroSat	Marschall & Distl 2007	BA	Linkage analysis	459	FCI	4	REN298N18	FH2773	Marschall 2007	1754876	6004514
+MicroSat	Marschall & Distl 2007	BA	Linkage analysis	459	FCI	8	FH4003	C08.410	Marschall 2007	26194338	31198436
+MicroSat	Marschall & Distl 2007	BA	Linkage analysis	459	FCI	9	REN144L19	ZUBECA3	Marschall 2007	21501930	22829806
+MicroSat	Marschall & Distl 2007	BA	Linkage analysis	459	FCI	9	REN177B24	REN73K24	Marschall 2007	50790920	50791291
+MicroSat	Marschall & Distl 2007	BA	Linkage analysis	459	FCI	16	REN54I19	REN54I19	Marschall 2007	32667268	32667438
+MicroSat	Marschall & Distl 2007	BA	Linkage analysis	459	FCI	19	FH5165	FH3868	Marschall 2007	37377081	47487153
+MicroSat	Marschall & Distl 2007	BA	Linkage analysis	459	FCI	22	REN49F22	REN49F22	Marschall 2007	998286	998439
+MicroSat	Marschall & Distl 2007	BA	Linkage analysis	459	FCI	26	FH5173	REN88N03	Marschall 2007	29400652	29609995
+MicroSat	Marschall & Distl 2007	BA	Linkage analysis	459	FCI	26	FH2130	C26.733	Marschall 2007	33537791	35986932
+MicroSat	Marschall & Distl 2007	BA	Linkage analysis	459	FCI	29	REN164F23	REN164F23	Marschall 2007	24852404	24852704
+MicroSat	Marschall & Distl 2007	BA	Linkage analysis	459	FCI	32	FH3744	FH3744	Marschall 2007	13076700	13077214
+MicroSat	Marschall & Distl 2007	BA	Linkage analysis	459	FCI	33	MS33_3.2Mb	REN112D03	Marschall 2007	6512393	6512624
+MicroSat	Marschall & Distl 2007	BA	Linkage analysis	459	FCI	34	FH3721	FH3721	Marschall 2007		
+MicroSat	Marschall & Distl 2007	BA	Linkage analysis	459	FCI	35	REN94K23	REN94K23	Marschall 2007	20517196	20517437
+MicroSat	Liu et al 2007	LR, LA, LRxLA	Linkage analysis	148	OTF	1	C01.673	FH2313	Liu 2007	16900668	16900961
+MicroSat	Liu et al 2007	LR, LA, LRxLA	Linkage analysis	148	OTF	5	CPH14	C05.377	Liu 2007	73855874	73856019
+MicroSat	Liu et al 2007	LR, LA, LRxLA	Linkage analysis	148	OTF	8	FH2138	REN288F11	Liu 2007	48326514	62337639
+MicroSat	Liu et al 2007	LR, LA, LRxLA	Linkage analysis	148	OTF	28	REN309N19	REN146G17	Liu 2007	30555194	30555505
+MicroSat	Liu et al 2007	LR, LA, LRxLA	Linkage analysis	148	OTF	9	REN75M10	FH2263	Liu 2007	13295476	13295716
+MicroSat	Liu et al 2007	LR, LA, LRxLA	Linkage analysis	148	OTF	17	REN50B03	FH2321	Liu 2007	9428735	29786464
+MicroSat	Liu et al 2007	LR, LA, LRxLA	Linkage analysis	148	OTF	3	FH2107	PEZ12	Liu 2007	81007467	81007794
+MicroSat	Liu et al 2007	LR, LA, LRxLA	Linkage analysis	148	OTF	22	FH2109	REN107H05	Liu 2007	23480964	44828738
+MicroSat	Zhu et al 2008	LR, LA, LRxLA, BA	Linkage analysis	257	ID	11	Zz_NA1	Zz_NA1	Zhu 2008		
+MicroSat	Zhu et al 2008	LR, LA, LRxLA, BA	Linkage analysis	257	ID	29	Zz_NA2	Zz_NA2	Zhu 2008		
+MicroSat	Phavaphutanon et al 2009	LR	GWAS, Linkage analysis	192	CP,L	1	FH3300	REN112I02	Phavaphutanon 2009	36817802	45618213
+MicroSat	Phavaphutanon et al 2009	LR	GWAS, Linkage analysis	192	CP,R	1	C01.424	C01.251	Phavaphutanon 2009	55746308	60933644
+MicroSat	Phavaphutanon et al 2009	LR	GWAS, Linkage analysis	192	CP,R	2	FH3965	C02.342	Phavaphutanon 2009	78119014	84101100
+MicroSat	Phavaphutanon et al 2009	LR	GWAS, Linkage analysis	192	NO,R,CP	10	FH2422	DTR10.5	Phavaphutanon 2009		
+MicroSat	Phavaphutanon et al 2009	LR	GWAS, Linkage analysis	192	DLS,CP,R	20	FH2158	REN114M19	Phavaphutanon 2009	44058623	53608853
+MicroSat	Phavaphutanon et al 2009	LR	GWAS, Linkage analysis	192	CP,R	20	FH2951	REN100J13	Phavaphutanon 2009	14461917	22820335
+MicroSat	Phavaphutanon et al 2009	LR	GWAS, Linkage analysis	192	DLS	22	REN49F22	REN42F10	Phavaphutanon 2009	998286	4502808
+MicroSat	Phavaphutanon et al 2009	LR	GWAS, Linkage analysis	192	CP,R	32	CPH2	REN41D20	Phavaphutanon 2009	6691147	9402258
+SNP	Zhou et al 2010	LR, LA, LRxLA, Others	GWAS	721	NO	3	BICF2S2459425	0	Zhou 2010	74720873	74720993
+SNP	Zhou et al 2010	LR, LA, LRxLA, Others	GWAS	721	NO	11	BICF2P550340	0	Zhou 2010	32935770	32935890
+SNP	Zhou et al 2010	LR, LA, LRxLA, Others	GWAS	721	NO	11	BICF2S23432143	0	Zhou 2010	57517597	57517717
+SNP	Zhou et al 2010	LR, LA, LRxLA, Others	GWAS	721	NO	30	BICF2P799261	0	Zhou 2010	13883057	13883177
+SNP	Zhou et al 2010	LR, LA, LRxLA, Others	GWAS case-controle	99	OA	17	BICF2G630205523	0	Zhou 2010	48092910	48093030
+SNP	Zhou et al 2010	LR, LA, LRxLA, Others	GWAS case-controle	99	OA	37	BICF2P1242205	0	Zhou 2010	17299306	17299426
