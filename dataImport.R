@@ -80,7 +80,7 @@ dataImport_server <- function(id) {
               col_types = col_types
             ))
           } else {
-            print("Error: Sheed selected isn't in file")
+            print("Error: Sheet selected isn't in file")
             df <- NULL
           }
         } else if (ext == "rda") {
@@ -89,7 +89,7 @@ dataImport_server <- function(id) {
           if (input$dfSelected %in% allData){
             df <- get(input$dfSelected)
           }else {
-            print("Error: Sheed selected isn't in file")
+            print("Error: Sheet selected isn't in file")
             df <- NULL
           }
         }

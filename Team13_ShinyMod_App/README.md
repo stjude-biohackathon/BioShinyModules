@@ -8,16 +8,16 @@
 - [X] Mito Coverage
 - [X] DMR Plot
 - [X] Heatmap
-- [ ] Histogram
+- [X] Histogram
 - [ ] Scatter Plot
-- [ ] PCA
-- [ ] Dist
-- [ ] PCA Palette
-- [ ] Gene Violin
+- [X] PCA
+- [X] Dist
+- [X] PCA Palette
+- [X] Gene Violin
 - [ ] scUMAP
 - [ ] scViolin
 - [ ] scTSNE
 - [ ] scGOI
 - [ ] scRidge
 - [ ] scDoHeatmap
-- [ ] Survival KMplot
+- [X] Survival KMplot

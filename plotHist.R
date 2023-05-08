@@ -1,6 +1,7 @@
 # This module was created during the St Jude Bio-Hackathon of May 2023 by the team 13.
 # author: Max Qiu (ytqiuhaowen@gmail.com)
 # author: Louis Le Nézet (louislenezet@gmail.com)
+# author: Alyssa Obermayer (aobermayer4@gmail.com)
 
 # Documentation
 #' R Shiny module to generate a histogram
@@ -48,8 +49,8 @@ ggplot_truehist <- function(data, breaks = 50, title) {
 plotHist_ui <- function(id) {
   ns <- NS(id)
   tagList(
-    numericInput(ns("bins"), "bins", 20, min = 1, step = 1),
-    plotOutput(ns("hist"))
+    numericInput(NS(id,"bins"), "bins", 20, min = 1, step = 1),
+    plotOutput(NS(id,"hist"))
   )
 }
 
