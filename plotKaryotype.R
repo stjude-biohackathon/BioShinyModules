@@ -3,7 +3,7 @@
 
 # Documentation
 #' R Shiny module to generate karyotype graph
-#' 
+#'
 #' @param id A string.
 #' @param df A dataframe.
 #' @param vbl_x The variable name to use in df as abscissa.
@@ -23,20 +23,20 @@ library(karyoploteR)
 # TODO write in this section the different function use by the module
 
 kpAddCytobandsCust <- function (karyoplot, color.table = NULL, color.schema = c("circos", 
-                                                          "biovizbase", "only.centromeres"), clipping = TRUE, 
-          ...) 
-{
-  if (missing(karyoplot)) 
+                                                          "biovizbase", "only.centromeres"), clipping = TRUE,
+          ...) {
+  if (missing(karyoplot))
     stop("The parameter 'karyoplot' is required")
-  if (!methods::is(karyoplot, "KaryoPlot")) 
+  if (!methods::is(karyoplot, "KaryoPlot"))
     stop("'karyoplot' must be a valid 'KaryoPlot' object")
-  if (!is.null(karyoplot$cytobands) && length(karyoplot$cytobands) > 
+  if (!is.null(karyoplot$cytobands) && length(karyoplot$cytobands) >
       0) {
     cyto <- karyoplot$cytobands
+    print(cyto)
   }
   else {
     cyto <- karyoplot$genome
-    mcols(cyto) <- data.frame(name = seqnames(cyto), gieStain = "gpos50", 
+    mcols(cyto) <- data.frame(name = seqnames(cyto), gieStain = "gpos50",
                               stringsAsFactors = FALSE)
   }
   if (!methods::is(cyto, "GRanges")) 
@@ -81,12 +81,17 @@ kpAddCytobandsCust <- function (karyoplot, color.table = NULL, color.schema = c(
   invisible(karyoplot)
 }
 
+
+cytobands = df_cytobands
+chrtoplot = 1
+
+
 plotKaryotypeCust <- function(df, chrtoplot, cytobands=NULL, plottype=1) {
   print(df)
   print(chrtoplot)
   # Remove NA value from cytobands
   cytobands = cytobands[!is.na(cytobands$start) & !is.na(cytobands$end) & !is.na(cytobands$chr),c("chr","start","end","gieStain")]
-  plotKaryotype(genome = df, chromosomes = chrtoplot,
+  kp <- plotKaryotype(genome = df, chromosomes = chrtoplot,
                 cytobands = cytobands, plot.type = plottype,ideogram.plotter=kpAddCytobandsCust)
 }
 
@@ -95,15 +100,15 @@ plotKaryotypeCust <- function(df, chrtoplot, cytobands=NULL, plottype=1) {
 # TODO Add here the UI function of the module
 
 Karyotype_ui <- function(id) {
-  
+
   ns <- NS(id)
-  
+
   tagList(
     plotOutput(ns("plot")),
     selectInput(ns("plottype"),"Choose plot type", choices=seq(1,7)),
     uiOutput(ns("chrSelection"))
   )
-  
+
 }
 
 #### Server function of the module #### ----------
@@ -119,16 +124,16 @@ Karyotype_server <- function(id, df_geno, df_cyto) {
                   choices = chr, selected = chr[1], multiple = TRUE
       )
     })
-    
+
     karyotype_plot <- reactive({
       req(input$chrSelected)
       plotKaryotypeCust(df_geno(), input$chrSelected, df_cyto(), input$plottype )
     })
-    
+
     output$plot <- renderPlot({
       karyotype_plot()
     })
-    
+
     return(karyotype_plot)
   })
 }
@@ -148,6 +153,8 @@ Karyotype_demo <- function() {
   }
   shinyApp(ui, server)
 }
+
+Karyotype_demo()
 
 # TODO list for this template
 # TODO rename all the function as modulename_function
