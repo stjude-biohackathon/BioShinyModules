@@ -95,22 +95,22 @@ kpAddCytobandsCust <- function (kp, color.table = NULL,
 plotKaryotypeShiny <- function(df, chrtoplot, cytobands=NULL, plottype=1) {
   # Remove NA value from cytobands
   cytobands = cytobands[!is.na(cytobands$start) & !is.na(cytobands$end) & !is.na(cytobands$chr),c("chr","start","end","gieStain")]
-  plotKaryotype(genome = df, chromosomes = chrtoplot,
+  kp <- plotKaryotype(genome = df, chromosomes = chrtoplot,
                 cytobands = cytobands, plot.type = plottype,ideogram.plotter=kpAddCytobandsCust)
 }
 
 #### UI function of the module #### ----------
 
 Karyotype_ui <- function(id) {
-  
+
   ns <- NS(id)
-  
+
   tagList(
     plotOutput(ns("plot")),
     selectInput(ns("plottype"),"Choose plot type", choices=seq(1,7)),
     uiOutput(ns("chrSelection"))
   )
-  
+
 }
 
 #### Server function of the module #### ----------
@@ -126,16 +126,16 @@ Karyotype_server <- function(id, df_geno, df_cyto) {
                   choices = chr, selected = chr[1], multiple = TRUE
       )
     })
-    
+
     karyotype_plot <- reactive({
       req(input$chrSelected)
       plotKaryotypeShiny(df_geno(), input$chrSelected, df_cyto(), input$plottype )
     })
-    
+
     output$plot <- renderPlot({
       karyotype_plot()
     })
-    
+
     return(karyotype_plot)
   })
 }
