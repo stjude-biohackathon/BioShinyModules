@@ -9,7 +9,7 @@
 #' @param df_cyto A dataframe containing the cytobands or region of interest localisations in the form chr start end + metadata.
 #' @returns A Shiny module.
 #' @examples
-#' test_demo()
+#' Karyotype_demo()
 
 #### Library needed #### ----------
 library(ggplot2)
