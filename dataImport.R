@@ -14,6 +14,7 @@ library(shiny)
 library(tidyr)
 library(tibble)
 library(readxl)
+library(shinyWidgets)
 
 #### UI function of the module #### ----------
 
@@ -24,10 +25,11 @@ dataImport_ui <- function(id, label = "Select data file") {
     checkboxInput(ns("heading"), "Has heading"),
     checkboxInput(ns("to_char"), "Load all data as strings"),
     checkboxInput(ns("stringsAsFactors"), "Strings as factors"),
-    selectInput(ns("quote"), "Quote", c(
+    pickerInput(ns("quote"), "Quote", c(
       "None" = "",
       "Double quote" = "\"",
-      "Single quote" = "'"
+      "Single quote" = "'",
+      "Both"="\"'"
     )),
     selectInput(ns("sep"), "Separator", c(
       "Comma" = ",",
@@ -71,6 +73,7 @@ dataImport_server <- function(id) {
             quote = input$quote, header = input$heading,
             colClasses = colClasses
           )
+          ?read.csv
         } else if (ext %in% c("xls", "xlsx")) {
           sheetsPresent <- excel_sheets(file)
           req(input$dfSelected)
@@ -165,3 +168,5 @@ dataImport_demo <- function() {
 
   shinyApp(ui, server)
 }
+
+dataImport_demo()
