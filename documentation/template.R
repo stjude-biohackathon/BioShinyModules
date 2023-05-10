@@ -59,7 +59,7 @@ test_server <- function(id, df, vbl_x, vbl_y) {
       filename = function() {paste0(vbl_x, "by", vbl_y, '.png')},
       content = function(file) {ggsave(file, plot())}
     )
-    
+    return(plot)
   })
 }
 
