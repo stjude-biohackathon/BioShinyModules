@@ -21,10 +21,12 @@ library(qqman)
 # Module code for 'selectorUI' and 'selector'
 selectorUI <- function(id) {
   ns <- NS(id)
-  selectizeInput(inputId = ns('select'),
-                 label = "Should we highlight snps",
-                 choices = c("Yes", "No"),
-                 selected="No")
+  selectizeInput(
+    inputId = ns("select"),
+    label = "Should we highlight snps",
+    choices = c("Yes", "No"),
+    selected = "No"
+  )
 }
 
 selector <- function(input, output, session) {
@@ -32,7 +34,7 @@ selector <- function(input, output, session) {
 }
 
 #### UI function of the module #### ----------
-Manhattan_ui<- function(id) {
+Manhattan_ui <- function(id) {
   ns <- NS(id)
   tagList(
     sidebarPanel(
@@ -40,7 +42,7 @@ Manhattan_ui<- function(id) {
       uiOutput(ns("chrposition")),
       uiOutput(ns("snp")),
       uiOutput(ns("pvalue")),
-      selectorUI(ns('id1')),
+      selectorUI(ns("id1")),
       fileInput(ns("file_with_snps_to_highlight"), "Upload file with snps to highlight"),
       actionButton(ns("submit_click"), "Generate plot")
     ),
@@ -53,9 +55,7 @@ Manhattan_ui<- function(id) {
 
 #### Server function of the module #### ----------
 Manhattan_server <- function(id, df, chr_colors) {
-  
   moduleServer(id, function(input, output, session) {
-    
     ## Custom selection based on df
     ns <- NS(id)
 
@@ -71,45 +71,47 @@ Manhattan_server <- function(id, df, chr_colors) {
     output$pvalue <- renderUI({
       selectInput(ns("col_pvalue"), "Select the column that best descriobes p-value", choices = names(df()))
     })
-    
+
     ## Plotting function
     manhattan_plot <- eventReactive(input$submit_click, {
-      manhattan(df(), chr = input$col_chr,
-                    bp = input$col_chrposition,
-                    snp = input$col_snp,
-                    p = input$col_pvalue,
-                    col = chr_colors,
-                    highlight = snps_to_highlight() )
+      manhattan(df(),
+        chr = input$col_chr,
+        bp = input$col_chrposition,
+        snp = input$col_snp,
+        p = input$col_pvalue,
+        col = chr_colors,
+        highlight = snps_to_highlight()
+      )
     })
 
     snps_to_highlight <- eventReactive(input$submit_click, {
-      condition1 <- callModule(selector, 'id1')
-      if (condition1() == "Yes"){
+      condition1 <- callModule(selector, "id1")
+      if (condition1() == "Yes") {
         req(input$file_with_snps_to_highlight)
         datTmp <- read_tsv(input$file_with_snps_to_highlight$datapath)[[1]]
         return(datTmp)
-      }else{
+      } else {
         return(NULL)
       }
-      
     })
-    
+
     output$manhattanplot <- renderPlot({
       manhattan_plot()
     })
-    
+
     return(manhattan_plot)
-    
   })
 }
 
 #### Demo function of the module #### ----------
 Manhattan_demo <- function() {
   chr_colors <- met.brewer(n = 23, name = "Cross")
-  df<- gwasResults # Inbuilt dataset in the`qqman` package
+  df <- gwasResults # Inbuilt dataset in the`qqman` package
   ui <- fluidPage(Manhattan_ui("x"))
   server <- function(input, output, session) {
-    Manhattan_server("x", reactive({df}), chr_colors)
+    Manhattan_server("x", reactive({
+      df
+    }), chr_colors)
   }
   shinyApp(ui, server)
 }
