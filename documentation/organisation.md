@@ -27,7 +27,6 @@ Please help us modify and implement this file, with your ideas, expectation, que
 - [X] PCA plot (Max)
 - [X] 3D interactive PCA plot (Lawryn)
 
-
 ## What modules do we have so far? List under each one what cusotmization options we want
 
 - Heatmap

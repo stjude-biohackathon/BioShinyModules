@@ -2,7 +2,7 @@
 
 ## Libraries
 
-```
+```R
 library(shiny)   # Necessity
 library(ggplot2) # For better looking plots
 library(dplyr)   # For easier data manipulation reading
