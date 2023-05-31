@@ -126,8 +126,6 @@ survival_server <- function(id, df, time_var, event_var, group_var, group_var_ty
   })
 }
 
-survival_demo_1()
-
 #### Demo function of the module #### ----------
 
 survival_demo <- function() {
