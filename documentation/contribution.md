@@ -53,3 +53,9 @@ library(covr)
 # If run with no arguments implicitly calls `package_coverage()`
 report()
 ```
+
+## Package building
+
+### Requirement
+
+To build the package [Rtools](https://cran.r-project.org/bin/windows/Rtools/rtools42/rtools.html) will to be installed.
