@@ -1,0 +1,80 @@
+---
+title: Shiny modules usage
+author: Louis Le Nézet
+date: '`r format(Sys.time(),"%d %B, %Y")`'
+output:
+  rmarkdown::html_vignette:
+    toc: yes
+    toc_depth: 2
+header-includes: \usepackage{tabularx}
+vignette: |
+  %\VignetteIndexEntry{Shiny_modules_usage}
+  %\VignetteEncoding{UTF-8}
+  %\VignetteEngine{knitr::rmarkdown}
+---
+
+    
+Concept of shiny modules
+==========================
+
+Shiny modules are a usefull tool to decompose and organise complexe shiny app.
+It also allowed to easily shared simple component across multiple apps or to 
+share them with other people.
+This is exactly the aim of this package, to provide simple but usefull unit of 
+shiny modules for everybody to use.
+
+As mentioned in the well written [Shiny documentation](https://mastering-shiny.org/scaling-modules.html):
+
+    "At the simplest level, a module is a pair of UI and server functions.
+    The magic of modules comes because these functions are constructed in a
+    special way that creates a “namespace”. So far, when writing an app, the
+    names (ids) of the controls are global: all parts of your server function
+    can see all parts of your UI. Modules give you the ability to create
+    controls that can only be seen from within the module. This is called a
+    namespace because it creates “spaces” of “names” that are isolated from
+    the rest of the app."
+
+Launching one of the shiny modules
+==================================
+
+All modules available in this package has at least one demo function for you to experiment.
+To launch it just add `_demo` to the module you want to test
+
+```{r, eval=FALSE}
+# For the plotHeatmap module
+plotHeatmap_demo()
+```
+
+Add the shiny modules inside your app
+=====================================
+
+To add a module inside your application you will need to add the *ui* and the *server* part of the module
+in each corresponding part of your app.
+To do that you can follow the example below:
+
+```{r, eval=FALSE}
+  ui <- fluidPage(
+    # Add the UI of data import
+    dataImport_ui("datafile", "User data"),
+
+    # Add the UI of plotHist
+    plotHist_ui("hist"),
+
+    # Add the UI of ggsaveBoth
+    ggsaveBoth_ui("savehist")
+  )
+
+  server <- function(input, output, session) {
+    # Add the serve of data import
+    data <- dataImport_server("datafile")
+
+    # Add the serve of plotHist
+    my_plot <- plotHist_server("hist", df)
+
+    # Add the server of ggsaveBoth
+    ggsaveBoth_server("savehist", my_plot)
+  }
+  shinyApp(ui, server)
+```
+
+Thus in just a few line you've added 3 components that have independent namespace and work together nonetheless.
