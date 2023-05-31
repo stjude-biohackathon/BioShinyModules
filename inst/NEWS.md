@@ -1,0 +1,9 @@
+# CHANGES IN VERSION 0.1.0
+
+## NEW FEATURES
+
+- Add `plotPCA` function
+
+## SIGNIFICANT USER-VISIBLE CHANGES
+
+- Initial release
