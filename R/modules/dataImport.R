@@ -47,7 +47,7 @@ dataImport_ui <- function(id, label = "Select data file") {
 dataImport_server <- function(id) {
   moduleServer(id, function(input, output, session) {
     # The selected file, if any
-    userFile <- reactive({
+    user_file <- reactive({
       # If no file is selected, don't do anything
       validate(need(input$file, message = FALSE))
       input$file
@@ -55,29 +55,29 @@ dataImport_server <- function(id) {
 
     ## Data selection ------------------------
     df <- reactive({
-      file <- userFile()$datapath
+      file <- user_file()$datapath
       if (!is.null(file)) {
         req(file)
         ext <- tools::file_ext(file)
-        validate(need(ext %in% c("csv", "txt", "xls", "xlsx", "rda"), "Please upload a (csv, txt, xls, xlsx, rda) file"))
+        validate(need(ext %in% c("csv", "txt", "xls", "xlsx", "rda"),
+          "Please upload a (csv, txt, xls, xlsx, rda) file"))
         if (input$to_char) {
-          colClasses <- "character"
+          col_classes <- "character"
           col_types <- "text"
         } else {
-          colClasses <- NA
+          col_classes <- NA
           col_types <- NULL
         }
-        if (ext %in% c("csv","txt")) {
+        if (ext %in% c("csv", "txt")) {
           df <- read.csv(file,
             sep = input$sep,
             quote = input$quote, header = input$heading,
-            colClasses = colClasses
+            col_classes = col_classes
           )
-          ?read.csv
         } else if (ext %in% c("xls", "xlsx")) {
-          sheetsPresent <- excel_sheets(file)
+          sheets_present <- excel_sheets(file)
           req(input$dfSelected)
-          if (input$dfSelected %in% sheetsPresent) {
+          if (input$dfSelected %in% sheets_present) {
             df <- as.data.frame(readxl::read_excel(file,
               sheet = input$sheetSelected, col_names = input$heading,
               col_types = col_types
@@ -87,16 +87,17 @@ dataImport_server <- function(id) {
             df <- NULL
           }
         } else if (ext == "rda") {
-          allData <- load(file)
+          all_data <- load(file)
           req(input$dfSelected)
-          if (input$dfSelected %in% allData){
+          if (input$dfSelected %in% all_data) {
             df <- get(input$dfSelected)
           }else {
             print("Error: Sheet selected isn't in file")
             df <- NULL
           }
         }
-        df <- as.data.frame(unclass(df), stringsAsFactors = input$stringsAsFactors)
+        df <- as.data.frame(unclass(df),
+          stringsAsFactors = input$stringsAsFactors)
       } else {
         print("Error: data selected is null")
         df <- NULL
@@ -105,34 +106,34 @@ dataImport_server <- function(id) {
 
     # We can run observers in here if we want to
     observe({
-      msg <- sprintf("File %s was uploaded", userFile()$name)
+      msg <- sprintf("File %s was uploaded", user_file()$name)
       cat(msg, "\n")
     })
 
     ns <- NS(id)
-    
+
     output$dfSelection <- renderUI({
-      file <- userFile()$datapath
+      file <- user_file()$datapath
       req(file)
       ext <- tools::file_ext(file)
       if (ext %in% c("xls", "xlsx")) {
-        sheetsPresent <- excel_sheets(file)
-        if (!is.null(sheetsPresent)) {
+        sheets_present <- excel_sheets(file)
+        if (!is.null(sheets_present)) {
           selectInput(ns("dfSelected"),
             label = "Select dataframe to use",
-            choices = sheetsPresent, selected = sheetsPresent[1]
+            choices = sheets_present, selected = sheets_present[1]
           )
         } else {
           message("No sheets find in file")
           NULL
         }
-      } else if (ext == "rda"){
-        allData <- load(file)
+      } else if (ext == "rda") {
+        all_data <- load(file)
         selectInput(ns("dfSelected"),
                     label = "Select dataframe to use",
-                    choices = allData
+                    choices = all_data
         )
-      }else{
+      } else {
         message("File not an xls, xlsx nor rda")
         NULL
       }
