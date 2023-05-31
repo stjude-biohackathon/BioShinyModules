@@ -7,3 +7,7 @@ For information about the organisation of this project please find the [organisa
 ## Virtual machine
 
 For information about how to connect to your virtual machine, please find the [vm_connection.md](/documentation/vm_connection.md) file.
+
+## Contribution
+
+Contribution guidelines can be found in the [contribution.md](/documentation/contribution.md) file.
