@@ -23,7 +23,8 @@ share them with other people.
 This is exactly the aim of this package, to provide simple but usefull unit of 
 shiny modules for everybody to use.
 
-As mentioned in the well written [Shiny documentation](https://mastering-shiny.org/scaling-modules.html):
+As mentioned in the well written
+[Shiny documentation](https://mastering-shiny.org/scaling-modules.html):
 
     "At the simplest level, a module is a pair of UI and server functions.
     The magic of modules comes because these functions are constructed in a
@@ -37,10 +38,11 @@ As mentioned in the well written [Shiny documentation](https://mastering-shiny.o
 Launching one of the shiny modules
 ==================================
 
-All modules available in this package has at least one demo function for you to experiment.
+All modules available in this package has at least one demo function for you to
+experiment.
 To launch it just add `_demo` to the module you want to test
 
-```{r, eval=FALSE}
+```{r demo, eval=FALSE}
 # For the plotHeatmap module
 plotHeatmap_demo()
 ```
@@ -48,33 +50,39 @@ plotHeatmap_demo()
 Add the shiny modules inside your app
 =====================================
 
-To add a module inside your application you will need to add the *ui* and the *server* part of the module
-in each corresponding part of your app.
+To add a module inside your application you will need to add the *ui* and the
+*server* part of the module in each corresponding part of your app.
 To do that you can follow the example below:
 
-```{r, eval=FALSE}
-  ui <- fluidPage(
-    # Add the UI of data import
-    dataImport_ui("datafile", "User data"),
+```{r app, eval=FALSE}
+ui <- fluidPage(
+  # Add the UI of data import
+  dataImport_ui("datafile", "User data"),
 
-    # Add the UI of plotHist
-    plotHist_ui("hist"),
+  # Add the UI of plotHist
+  plotHist_ui("hist"),
 
-    # Add the UI of ggsaveBoth
-    ggsaveBoth_ui("savehist")
-  )
+  # Add the UI of ggsaveBoth
+  ggsaveBoth_ui("savehist")
+)
 
-  server <- function(input, output, session) {
-    # Add the serve of data import
-    data <- dataImport_server("datafile")
+server <- function(input, output, session) {
+  # Add the serve of data import
+  data <- dataImport_server("datafile")
 
-    # Add the serve of plotHist
-    my_plot <- plotHist_server("hist", df)
+  # Add the serve of plotHist
+  my_plot <- plotHist_server("hist", df)
 
-    # Add the server of ggsaveBoth
-    ggsaveBoth_server("savehist", my_plot)
-  }
-  shinyApp(ui, server)
+  # Add the server of ggsaveBoth
+  ggsaveBoth_server("savehist", my_plot)
+}
+shinyApp(ui, server)
 ```
 
-Thus in just a few line you've added 3 components that have independent namespace and work together nonetheless.
+Thus in just a few line you've added 3 components that have independent
+namespace and work together nonetheless.
+
+## session_info
+```{r sessionInfo, eval=TRUE}
+sessioninfo::session_info()
+```
