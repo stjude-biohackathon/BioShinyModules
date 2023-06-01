@@ -1,4 +1,5 @@
-# This module was created during the St Jude Bio-Hackathon of May 2023 by the team 13.
+# This module was created during the St Jude Bio-Hackathon of May 2023
+# by the team 13.
 # author: Max Qiu (maxqiu@unl.edu)
 # author: Louis Le Nézet (louislenezet@gmail.com)
 
@@ -24,55 +25,64 @@ usethis::use_package("shinyWidgets")
 #' @param to_char A boolean defining if all the dataset should be read as
 #' character.
 #' @returns A dataframe.
+#' @example
+#' \donttest{
+#'     read_data("path/to/my/file.txt", sep=",", header=FALSE)
+#' }
 #' @keywords dataframe
 #' @export read_data
-read_data <- function(file, sep = ";", quote = "'", header = TRUE, df_name = NA, stringsAsFactors = TRUE, to_char = TRUE){
-  if (!is.null(file)) {
-    shiny::req(file)
-    ext <- tools::file_ext(file)
-    shiny::validate(shiny::need(ext %in% c("csv", "txt", "xls", "xlsx", "rda"),
-                  "Please upload a (csv, txt, xls, xlsx, rda) file"))
-    if (to_char) {
-      col_classes <- "character"
-      col_types <- "text"
-    } else {
-      col_classes <- NA
-      col_types <- NULL
-    }
-    if (ext %in% c("csv", "txt")) {
-      df <- utils::read.csv(file,
-                     sep = sep,
-                     quote = quote, header = header,
-                     colClasses = col_classes
-      )
-    } else if (ext %in% c("xls", "xlsx")) {
-      sheets_present <- readxl::excel_sheets(file)
-      shiny::req(df_name)
-      if (df_name %in% sheets_present) {
-        df <- as.data.frame(readxl::read_excel(file,
-                                               sheet = df_name, col_names = header,
-                                               col_types = col_types
+read_data <- function(file, sep = ";", quote = "'", header = TRUE, df_name = NA,
+                stringsAsFactors = TRUE, to_char = TRUE) {
+    if (!is.null(file)) {
+        shiny::req(file)
+        ext <- tools::file_ext(file)
+        shiny::validate(shiny::need(
+            ext %in% c("csv", "txt", "xls", "xlsx", "rda"),
+            "Please upload a (csv, txt, xls, xlsx, rda) file"
         ))
-      } else {
-        print("Error: Sheet selected isn't in file")
-        df <- NULL
-      }
-    } else if (ext == "rda") {
-      all_data <- base::load(file)
-      shiny::req(df_name)
-      if (df_name %in% all_data) {
-        df <- get(df_name)
-      }else {
-        print("Error: Sheet selected isn't in file")
-        df <- NULL
-      }
+        if (to_char) {
+            col_classes <- "character"
+            col_types <- "text"
+        } else {
+            col_classes <- NA
+            col_types <- NULL
+        }
+        if (ext %in% c("csv", "txt")) {
+            df <- utils::read.csv(file,
+                sep = sep,
+                quote = quote, header = header,
+                colClasses = col_classes
+            )
+        } else if (ext %in% c("xls", "xlsx")) {
+            sheets_present <- readxl::excel_sheets(file)
+            shiny::req(df_name)
+            if (df_name %in% sheets_present) {
+                df <- as.data.frame(readxl::read_excel(file,
+                    sheet = df_name,
+                    col_names = header,
+                    col_types = col_types
+                ))
+            } else {
+                message("Error: Sheet selected isn't in file")
+                df <- NULL
+            }
+        } else if (ext == "rda") {
+            all_data <- base::load(file)
+            shiny::req(df_name)
+            if (df_name %in% all_data) {
+                df <- get(df_name)
+            } else {
+                message("Error: Sheet selected isn't in file")
+                df <- NULL
+            }
+        }
+        as.data.frame(unclass(df),
+            stringsAsFactors = stringsAsFactors
+        )
+    } else {
+        message("Error: data selected is null")
+        NULL
     }
-    as.data.frame(unclass(df),
-      stringsAsFactors = stringsAsFactors)
-  } else {
-    print("Error: data selected is null")
-    NULL
-  } 
 }
 
 #' Get dataframe name
@@ -83,25 +93,29 @@ read_data <- function(file, sep = ";", quote = "'", header = TRUE, df_name = NA,
 #' necessary the different dataframe / sheet names available.
 #' @param file The file path
 #' @returns A vector of all the dataframe name present.
+#' @example
+#' \donttest{
+#'     get_dataframe("path/to/my/file.txt")
+#' }
 #' @keywords dataframe
 #' @export get_dataframe
 get_dataframe <- function(file) {
-  shiny::req(file)
-  ext <- tools::file_ext(file)
-  if (ext %in% c("xls", "xlsx")) {
-    sheets_present <- readxl::excel_sheets(file)
-    if (!is.null(sheets_present)) {
-      sheets_present
+    shiny::req(file)
+    ext <- tools::file_ext(file)
+    if (ext %in% c("xls", "xlsx")) {
+        sheets_present <- readxl::excel_sheets(file)
+        if (!is.null(sheets_present)) {
+            sheets_present
+        } else {
+            message("No sheets find in file")
+            NULL
+        }
+    } else if (ext == "rda") {
+        base::load(file)
     } else {
-      message("No sheets find in file")
-      NULL
+        message("File not an xls, xlsx nor rda")
+        NULL
     }
-  } else if (ext == "rda") {
-    base::load(file)
-  } else {
-    message("File not an xls, xlsx nor rda")
-    NULL
-  }
 }
 #### UI function of the module #### ----------
 #' Data import ui
@@ -119,32 +133,32 @@ get_dataframe <- function(file) {
 #' @param label A string use to prompt the user
 #' @returns A Shiny UI.
 #' @examples
-#' \dontrun{
-#'  dataImport_demo()
+#' \donttest{
+#' dataImport_demo()
 #' }
 #' @keywords dataframe
 #' @export dataImport_ui
 dataImport_ui <- function(id, label = "Select data file") {
-  ns <- shiny::NS(id)
-  shiny::tagList(
-    shiny::fileInput(ns("file"), label),
-    shiny::checkboxInput(ns("heading"), "Has heading"),
-    shiny::checkboxInput(ns("to_char"), "Load all data as strings"),
-    shiny::checkboxInput(ns("stringsAsFactors"), "Strings as factors"),
-    shinyWidgets::pickerInput(ns("quote"), "Quote", c(
-      "None" = "",
-      "Double quote" = "\"",
-      "Single quote" = "'",
-      "Both"="\"'"
-    )),
-    shiny::selectInput(ns("sep"), "Separator", c(
-      "Comma" = ",",
-      "Semi-colon" = ";",
-      "Tabulation" = "\t",
-      "Space" = " "
-    )),
-    shiny::uiOutput(ns("dfSelection"))
-  )
+    ns <- shiny::NS(id)
+    shiny::tagList(
+        shiny::fileInput(ns("file"), label),
+        shiny::checkboxInput(ns("heading"), "Has heading"),
+        shiny::checkboxInput(ns("to_char"), "Load all data as strings"),
+        shiny::checkboxInput(ns("stringsAsFactors"), "Strings as factors"),
+        shinyWidgets::pickerInput(ns("quote"), "Quote", c(
+            "None" = "",
+            "Double quote" = "\"",
+            "Single quote" = "'",
+            "Both" = "\"'"
+        )),
+        shiny::selectInput(ns("sep"), "Separator", c(
+            "Comma" = ",",
+            "Semi-colon" = ";",
+            "Tabulation" = "\t",
+            "Space" = " "
+        )),
+        shiny::uiOutput(ns("dfSelection"))
+    )
 }
 
 #### Server function of the module #### ----------
@@ -160,50 +174,51 @@ dataImport_ui <- function(id, label = "Select data file") {
 #' @param id A string.
 #' @returns A Shiny server.
 #' @examples
-#' \dontrun{
-#'  dataImport_demo()
+#' \donttest{
+#' dataImport_demo()
 #' }
 #' @keywords dataframe
 #' @export dataImport_server
 dataImport_server <- function(id) {
-  shiny::moduleServer(id, function(input, output, session) {
-    # The selected file, if any
-    user_file <- shiny::reactive({
-      # If no file is selected, don't do anything
-      shiny::validate(shiny::need(input$file, message = FALSE))
-      input$file
-    })
+    shiny::moduleServer(id, function(input, output, session) {
+        # The selected file, if any
+        user_file <- shiny::reactive({
+            # If no file is selected, don't do anything
+            shiny::validate(shiny::need(input$file, message = FALSE))
+            input$file
+        })
 
-    ## Data selection ------------------------
-    df <- shiny::reactive({
-      file <- user_file()$datapath
-      read_data(file, input$sep, input$quote, input$heading, input$dfSelected)
-    })
+        ## Data selection ------------------------
+        df <- shiny::reactive({
+            file <- user_file()$datapath
+            read_data(file, input$sep, input$quote,
+                      input$heading, input$dfSelected)
+        })
 
-    # We can run observers in here if we want to
-    shiny::observe({
-      msg <- sprintf("File %s was uploaded", user_file()$name)
-      cat(msg, "\n")
-    })
+        # We can run observers in here if we want to
+        shiny::observe({
+            msg <- sprintf("File %s was uploaded", user_file()$name)
+            message(msg, "\n")
+        })
 
-    ns <- shiny::NS(id)
+        ns <- shiny::NS(id)
 
-    output$dfSelection <- shiny::renderUI({
-      df_name <- get_dataframe(file)
-      
-      if(!is.null(df_name)) {
-        shiny::selectInput(ns("dfSelected"),
+        output$dfSelection <- shiny::renderUI({
+            df_name <- get_dataframe(file)
+
+            if (!is.null(df_name)) {
+                shiny::selectInput(ns("dfSelected"),
                     label = "Select dataframe to use",
                     choices = df_name, selected = df_name[1]
-        )
-      } else {
-        NULL
-      }
-    })
+                )
+            } else {
+                NULL
+            }
+        })
 
-    # Return the reactive that yields the data frame
-    return(df)
-  })
+        # Return the reactive that yields the data frame
+        return(df)
+    })
 }
 
 
@@ -219,29 +234,29 @@ dataImport_server <- function(id) {
 #' @returns A Shiny App.
 #' @examples
 #' \dontrun{
-#'  dataImport_demo()
+#' dataImport_demo()
 #' }
 #' @keywords dataframe
 #' @export dataImport_demo
 dataImport_demo <- function() {
-  ui <- shiny::fluidPage(
-    shiny::sidebarLayout(
-      shiny::sidebarPanel(
-        dataImport_ui("datafile", "User data (csv, xls, xlsx format)")
-      ),
-      shiny::mainPanel(
-        shiny::dataTableOutput("table")
-      )
+    ui <- shiny::fluidPage(
+        shiny::sidebarLayout(
+            shiny::sidebarPanel(
+                dataImport_ui("datafile", "User data (csv, xls, xlsx format)")
+            ),
+            shiny::mainPanel(
+                shiny::dataTableOutput("table")
+            )
+        )
     )
-  )
 
-  server <- function(input, output, session) {
-    datafile <- dataImport_server("datafile")
+    server <- function(input, output, session) {
+        datafile <- dataImport_server("datafile")
 
-    output$table <- shiny::renderDataTable({
-      datafile()
-    })
-  }
+        output$table <- shiny::renderDataTable({
+            datafile()
+        })
+    }
 
-  shiny::shinyApp(ui, server)
+    shiny::shinyApp(ui, server)
 }
