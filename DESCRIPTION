@@ -12,11 +12,7 @@ Imports:
     shiny,
     shinyWidgets,
     readxl,
-    data.table,
     knitr,
-    usethis,
-    tibble,
-    tidyr,
     rmarkdown
 Description: This comprehensive R package is designed to empower data analysis and exploration
 		by providing a collection of interactive Shiny modules. With a wide range of visualization
@@ -25,13 +21,15 @@ Description: This comprehensive R package is designed to empower data analysis a
 		their data. Whether importing and filtering data, assessing coverage or examining intricate
 		patterns, this package offers an intuitive and interactive interface for effortless data
 		visualization and exploration.
-License: LICENSE
+License: file LICENSE
 biocViews: ShinyApps, PrincipalComponent, Survival, Visualization
 URL: https://github.com/stjude-biohackathon/KIDS23-Team13
 BugReports: https://github.com/stjude-biohackathon/KIDS23-Team13/issues
 RoxygenNote: 7.2.3
 VignetteBuilder: knitr
+LazyData: true
 Suggests:
+    usethis,
     testthat (>= 3.0.0),
 	vdiffr
 Config/testthat/edition: 3
