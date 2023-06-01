@@ -4,8 +4,6 @@
 
 #### Library needed #### ----------
 usethis::use_package("shiny")
-usethis::use_package("tidyr")
-usethis::use_package("tibble")
 usethis::use_package("readxl")
 usethis::use_package("shinyWidgets")
 
