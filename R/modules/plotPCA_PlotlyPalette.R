@@ -87,7 +87,7 @@ plot3DPCA_server <- function(id, df, sample_anno, sample_anno_col) {
 
 #### Demo functionof the module #### ----------
 plot3DPCA_demo <- function() {
-  load("../example_data/MS_2.rda")
+  load("../../data-raw/MS_2.rda")
   df <- df
   sample_anno <- sample_meta
   sample_anno_col <- "sampleLabel"

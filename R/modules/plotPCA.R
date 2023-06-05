@@ -1,21 +1,28 @@
 # This module was created during the St Jude Bio-Hackathon of May 2023 by the team 13.
 # author: Max Qiu (maxqiu@unl.edu)
+# author: Lawryn Kasper (lawryn.kasper@stjude.org)
 
 # Documentation
-#' R Shiny module to generate PCA plot
+#' R Shiny module to generate PCA plot with choice of 2D or 3D
 #'
 #' @param id A string.
-#' @param df A dataframe.
+#' @param df A dataframe containing the value for each sample (column) for all the features (rows).
+#' @param sample_anno A data frame containing the sample informations.
+#' @param sample_anno_col The column name of sample category in sample_anno.
 #' @returns A Shiny module.
 #' @examples
-#' module.demo()
+#' plotPCA_demo()
+#'
 #### Library needed #### ----------
 library(shiny)
 library(ggplot2)
+library(ggplotly)
 library(pcaMethods)
+library(plotly)
+library(RColorBrewer)
 
 #### Function needed to work #### ----------
-#' plot PCA
+#' plot PCA 2D
 #'
 #' @param data A data frame with feature (row) by sample (column).
 #' @param sample_anno A data frame containing sample metadata
@@ -24,35 +31,76 @@ library(pcaMethods)
 #'
 #' @return GGplot PCA
 
-ggplot_pca <- function(df, sample_anno, sample_anno_col, title = NULL) {
-  require(pcaMethods)
-  require(ggplot2)
+ggplotly_2Dpca <- function(df, sample_anno, sample_anno_col, title = NULL) {
+        require(pcaMethods)
+        require(ggplot2)
 
-  data <- as.matrix(df)
-  class(data) <- "numeric"
+        data <- as.matrix(df)
+        class(data) <- "numeric"
 
-  labels <- as.matrix(sample_anno[sample_anno_col])
+        labels <- as.matrix(sample_anno[sample_anno_col])
 
-  pc1 <- pcaMethods::pca(t(data), scale = "pareto")
-  pc1merged <- merge(cbind(labels, t(data)),
-    pcaMethods::scores(pc1),
-    by = 0
-  )
-  ggplot(pc1merged, aes(PC1, PC2, colour = !!sym(sample_anno_col))) +
-    geom_point() +
-    stat_ellipse() +
-    xlab(paste("PC1", round((pc1@R2[1] * 100), digits = 1), "% of the variance")) +
-    ylab(paste("PC2", round((pc1@R2[2] * 100), digits = 1), "% of the variance")) +
-    ggtitle(label = title)
+        pc1 <- pcaMethods::pca(t(data), scale = "pareto")
+        pc1merged <- merge(cbind(labels, t(data)),
+        pcaMethods::scores(pc1),
+        by = 0
+        )
+        p = ggplot(pc1merged, aes(PC1, PC2, colour = !!sym(sample_anno_col))) +
+        geom_point() +
+        stat_ellipse() +
+        xlab(paste("PC1", round((pc1@R2[1] * 100), digits = 1), "% of the variance")) +
+        ylab(paste("PC2", round((pc1@R2[2] * 100), digits = 1), "% of the variance")) +
+        ggtitle(label = title)
+        ggplotly(p)
 }
 
+#' Plot PCA 3D
+#'
+#' @param data A data frame with feature (row) by sample (column).
+#' @param sample_anno A data frame containing sample metadata
+#' @param sample_anno_col Character. Sample annotation column in `sample_anno`
+#' @param title Character. Plot title
+#'
+#' @return Interactive PCA plot
 
+ggplotly_3Dpca <- function(df, sample_anno, sample_anno_col, pal, title) {
+        data <- as.matrix(df)
+        class(data) <- "numeric"
+
+        labels <- as.matrix(sample_anno[sample_anno_col])
+
+        pc1 <- pcaMethods::pca(t(data), nPcs = 3, scale = "pareto")
+        pc1merged <- merge(cbind(labels, t(data)),
+                           pcaMethods::scores(pc1),
+                           by = 0
+        )
+
+        plot_ly(pc1merged,
+                x = ~PC1, y = ~PC2, z = ~PC3, type = "scatter3d",
+                color = sample_anno$sampleLabel, colors = pal,
+                text = sample_anno$sampleName, hoverinfo = "text"
+        ) %>%
+                layout(title = title, scene = list(
+                        xaxis = list(title = "PC1"),
+                        yaxis = list(title = "PC2"),
+                        zaxis = list(title = "PC3")
+                ))
+}
+
+palettes <- rownames(RColorBrewer::brewer.pal.info)
 
 #### UI function of the module #### ----------
 plotPCA_ui <- function(id) {
   ns <- NS(id)
   tagList(
-    plotOutput(ns("plot"))
+          selectInput(ns("palette"), "Choose color palette", choices = palettes, selected = "Dark2"),
+          textInput(ns("title"), "Title graph", value = ""),
+          radioButtons(ns("dim_select"), "Select 2D or 3D",
+                       choices = c("2D", "3D"), selected = "2D"),
+          checkboxGroupInput(ns("PC_to_plot"), "Select 2 PC",
+                             choices = list("PC1", "PC2", "PC3"),
+                             selected = c("PC1", "PC2")),
+          plotlyOutput(ns("plot"))
   )
 }
 
@@ -63,19 +111,34 @@ plotPCA_server <- function(id, df, sample_anno, sample_anno_col) {
     stopifnot(is.reactive(sample_anno))
     stopifnot(is.reactive(sample_anno_col))
 
-    PCA_plot <- reactive({
-      ggplot_pca(df(), sample_anno(), sample_anno_col())
+    PCA2D_plot <- reactive({
+            ggplotly_2Dpca(df(), sample_anno(), sample_anno_col(), input$title)
     })
-    output$plot <- renderPlot({
-      PCA_plot()
+
+    PCA3D_plot <- reactive({
+            ggplotly_3Dpca(df(), sample_anno(), sample_anno_col(), input$palette, input$title)
     })
-    return(PCA_plot)
+
+    observeEvent(input$dim_select, {
+            if (input$dim_select == "2D"){
+            output$plot <- renderPlotly({
+                    PCA2D_plot()
+            })
+            return(PCA3D_plot)
+    } else {
+            output$plot <- renderPlotly({
+                    PCA3D_plot()
+            })
+            return(PCA2D_plot)
+    }
+    })
+
   })
 }
 
 #### Demo function of the module #### ----------
 plotPCA_demo <- function() {
-  load("../example_data/MS_2.rda")
+  load("../../data-raw/MS_2.rda")
   df <- df
   sample_anno <- sample_meta
   sample_anno_col <- "sampleLabel"
@@ -95,3 +158,10 @@ plotPCA_demo <- function() {
   }
   shinyApp(ui, server)
 }
+
+
+# to do
+
+# use palette for 2d plot
+# pc choice for 2d plot
+# add download button
