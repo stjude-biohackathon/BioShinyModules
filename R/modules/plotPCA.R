@@ -31,7 +31,7 @@ library(RColorBrewer)
 #'
 #' @return GGplot PCA
 
-ggplotly_2Dpca <- function(df, sample_anno, sample_anno_col, title = NULL) {
+ggplotly_2Dpca <- function(df, sample_anno, sample_anno_col, PC1, PC2, pal, title) {
         require(pcaMethods)
         require(ggplot2)
 
@@ -40,17 +40,18 @@ ggplotly_2Dpca <- function(df, sample_anno, sample_anno_col, title = NULL) {
 
         labels <- as.matrix(sample_anno[sample_anno_col])
 
-        pc1 <- pcaMethods::pca(t(data), scale = "pareto")
+        pc1 <- pcaMethods::pca(t(data), nPcs = 3, scale = "pareto")
         pc1merged <- merge(cbind(labels, t(data)),
-        pcaMethods::scores(pc1),
-        by = 0
+                           pcaMethods::scores(pc1),
+                           by = 0
         )
-        p = ggplot(pc1merged, aes(PC1, PC2, colour = !!sym(sample_anno_col))) +
-        geom_point() +
-        stat_ellipse() +
-        xlab(paste("PC1", round((pc1@R2[1] * 100), digits = 1), "% of the variance")) +
-        ylab(paste("PC2", round((pc1@R2[2] * 100), digits = 1), "% of the variance")) +
-        ggtitle(label = title)
+        p = ggplot(pc1merged, aes(!!sym(PC1), !!sym(PC2), colour = !!sym(sample_anno_col))) +
+                geom_point() +
+                scale_color_brewer(palette = pal) +
+                stat_ellipse() +
+                xlab(paste(PC1, round((pc1@R2[PC1] * 100), digits = 1), "% of the variance")) +
+                ylab(paste(PC2, round((pc1@R2[PC2] * 100), digits = 1), "% of the variance")) +
+                ggtitle(label = title)
         ggplotly(p)
 }
 
@@ -97,9 +98,12 @@ plotPCA_ui <- function(id) {
           textInput(ns("title"), "Title graph", value = ""),
           radioButtons(ns("dim_select"), "Select 2D or 3D",
                        choices = c("2D", "3D"), selected = "2D"),
-          checkboxGroupInput(ns("PC_to_plot"), "Select 2 PC",
+          selectInput(ns("PC1"), "Select first PC",
                              choices = list("PC1", "PC2", "PC3"),
-                             selected = c("PC1", "PC2")),
+                             selected = "PC1"),
+          selectInput(ns("PC2"), "Select second PC",
+                             choices = list("PC1", "PC2", "PC3"),
+                             selected = "PC2"),
           plotlyOutput(ns("plot"))
   )
 }
@@ -112,7 +116,9 @@ plotPCA_server <- function(id, df, sample_anno, sample_anno_col) {
     stopifnot(is.reactive(sample_anno_col))
 
     PCA2D_plot <- reactive({
-            ggplotly_2Dpca(df(), sample_anno(), sample_anno_col(), input$title)
+            ggplotly_2Dpca(df(), sample_anno(), sample_anno_col(),
+                           input$PC1, input$PC2,
+                           input$palette, input$title)
     })
 
     PCA3D_plot <- reactive({
@@ -137,31 +143,51 @@ plotPCA_server <- function(id, df, sample_anno, sample_anno_col) {
 }
 
 #### Demo function of the module #### ----------
-plotPCA_demo <- function() {
-  load("../../data-raw/MS_2.rda")
-  df <- df
-  sample_anno <- sample_meta
-  sample_anno_col <- "sampleLabel"
 
-  ui <- fluidPage(plotPCA_ui("x"))
-  server <- function(input, output, session) {
-    plotPCA_server(
-      "x", reactive({
-        df
-      }), reactive({
-        sample_anno
-      }),
-      reactive({
-        sample_anno_col
-      })
-    )
-  }
+plotPCA_demo <- function() {
+        source("ggsave_both.R")
+        load("../../data-raw/MS_2.rda")
+        df <- df
+        sample_anno <- sample_meta
+        sample_anno_col <- "sampleLabel"
+
+        ui <- fluidPage(plotPCA_ui("x"))
+
+        server <- function(input, output, session) {
+                my_plot <- plotPCA_server("x", reactive({
+                                df
+                        }), reactive({
+                                sample_anno
+                        }), reactive({
+                                sample_anno_col
+                        })
+                        )
+        }
   shinyApp(ui, server)
 }
 
+# to-do: download using ggsave_both()
+plotPCA_demo_2 <- function() {
+        source("ggsave_both.R")
+        load("../../data-raw/MS_2.rda")
+        df <- df
+        sample_anno <- sample_meta
+        sample_anno_col <- "sampleLabel"
 
-# to do
+        ui <- fluidPage(plotPCA_ui("x"),
+                        ggsaveBoth_ui("savepca"))
 
-# use palette for 2d plot
-# pc choice for 2d plot
-# add download button
+        server <- function(input, output, session) {
+                my_plot <- plotPCA_server("x", reactive({
+                        df
+                }), reactive({
+                        sample_anno
+                }), reactive({
+                        sample_anno_col
+                })
+                )
+                ggsaveBoth_server("savepca", my_plot)
+        }
+        shinyApp(ui, server)
+}
+
