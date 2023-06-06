@@ -157,9 +157,9 @@ plotPCA_demo <- function() {
     shinyApp(ui, server)
 }
 
-# to-do: download using ggsave_both()
+# to-do: download using exportPlot()
 plotPCA_demo_2 <- function() {
-    source("ggsave_both.R")
+    source("exportPlot.R")
     load("../../data-raw/MS_2.rda")
     df <- df
     sample_anno <- sample_meta
@@ -167,7 +167,7 @@ plotPCA_demo_2 <- function() {
 
     ui <- fluidPage(
         plotPCA_ui("x"),
-        ggsaveBoth_ui("savepca")
+        exportPlot_ui("savepca")
     )
 
     server <- function(input, output, session) {
@@ -178,7 +178,7 @@ plotPCA_demo_2 <- function() {
         }), reactive({
             sample_anno_col
         }))
-        ggsaveBoth_server("savepca", my_plot, is_plotly = TRUE)
+        exportPlot_server("savepca", my_plot, is_plotly = TRUE)
     }
     shinyApp(ui, server)
 }

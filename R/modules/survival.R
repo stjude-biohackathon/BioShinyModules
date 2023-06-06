@@ -208,7 +208,7 @@ survival_demo_1 <- function() {
 
 survival_demo_2 <- function() {
   source("dataImport.R")
-  source("ggsave_Both.R")
+  source("exportPlot.R")
 
   ui <- fluidPage(
     dataImport_ui("datafile", "User data (csv, xls, xlsx format)"),
@@ -219,7 +219,7 @@ survival_demo_2 <- function() {
       choices = c("categorical", "continuous")
     ),
     survival_ui("x"),
-    ggsaveBoth_ui("saveplot")
+    exportPlot_ui("saveplot")
   )
   server <- function(input, output, session) {
     df <- dataImport_server("datafile")
@@ -260,7 +260,7 @@ survival_demo_2 <- function() {
       my_plot()[["plot"]]
     })
 
-    ggsaveBoth_server("saveplot", saveplot)
+    exportPlot_server("saveplot", saveplot)
   }
   shinyApp(ui, server)
 }

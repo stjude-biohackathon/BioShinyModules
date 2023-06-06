@@ -62,8 +62,8 @@ ui <- fluidPage(
   # Add the UI of plotHist
   plotHist_ui("hist"),
 
-  # Add the UI of ggsaveBoth
-  ggsaveBoth_ui("savehist")
+  # Add the UI of exportPlot
+  exportPlot_ui("savehist")
 )
 
 server <- function(input, output, session) {
@@ -73,8 +73,8 @@ server <- function(input, output, session) {
   # Add the serve of plotHist
   my_plot <- plotHist_server("hist", df)
 
-  # Add the server of ggsaveBoth
-  ggsaveBoth_server("savehist", my_plot)
+  # Add the server of exportPlot
+  exportPlot_server("savehist", my_plot)
 }
 shinyApp(ui, server)
 ```
