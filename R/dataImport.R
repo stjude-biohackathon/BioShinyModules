@@ -29,7 +29,7 @@ usethis::use_package("shinyWidgets")
 #' \donttest{
 #'     read_data("path/to/my/file.txt", sep=",", header=FALSE)
 #' }
-#' @keywords dataframe
+#' @keywords data
 #' @export read_data
 read_data <- function(file, sep = ";", quote = "'", header = TRUE, df_name = NA,
                 stringsAsFactors = TRUE, to_char = TRUE) {
