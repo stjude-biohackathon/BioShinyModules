@@ -13,31 +13,47 @@
 #### Library needed #### ----------
 library(ggplot2)
 library(shiny)
-
+#reticulate::install_miniconda()
+#reticulate::conda_install('r-reticulate', 'python-kaleido==0.1.*')
+#reticulate::conda_install('r-reticulate', 'plotly', channel = 'plotly')
 
 #### UI function of the module #### ----------
 ggsaveBoth_ui <- function(id) {
   ns <- NS(id)
   tagList(
-    numericInput(ns("var1"), "Figure width", value = 15, min = 0, max = 20),
-    numericInput(ns("var2"), "Figure height", value = 10, min = 0, max = 20),
-    radioButtons(ns("var3"), label = "Select the file type", choices = list("png", "pdf"), selected = "png"),
+    numericInput(ns("width"), "Figure width", value = 15, min = 0, max = 20),
+    numericInput(ns("height"), "Figure height", value = 10, min = 0, max = 20),
+    radioButtons(ns("ext"), label = "Select the file type", choices = list("png", "pdf", "html"), selected = "png"),
     downloadButton(ns("dnld"), label = "")
   )
 }
 
 #### Server function of the module #### ----------
 
-ggsaveBoth_server <- function(id, my_plot) {
+ggsaveBoth_server <- function(id, my_plot, is_plotly=FALSE) {
   stopifnot(is.reactive(my_plot))
-
   moduleServer(id, function(input, output, session) {
     output$dnld <- downloadHandler(
       filename = function() {
-        paste("saveplot", input$var3, sep = ".")
+          paste("saveplot", input$ext, sep = ".")
       },
       content = function(file) {
-        ggsave(filename = file, plot = my_plot(), width = input$var1, height = input$var2, device = input$var3)
+        if (is_plotly) {
+            require(plotly)
+            if (tools::file_ext(file) == "html") {
+                htmlwidgets::saveWidget(file = file, my_plot())
+            }else {
+                # save_image(file = file, p = my_plot(), width = input$width, height = input$height)
+                message("Should export to html for interactive plot")
+                return(NULL)
+            }
+        } else {
+            if  (tools::file_ext(file) == "html") {
+                message("Shouldn't export to html for non interactive plot")
+                return(NULL)
+            }
+            ggsave(filename = file, plot = my_plot(), width = input$width, height = input$height, device = input$ext)   
+        }
       }
     )
   })
