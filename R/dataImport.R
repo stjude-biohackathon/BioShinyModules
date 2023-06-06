@@ -204,6 +204,7 @@ dataImport_server <- function(id) {
         ns <- shiny::NS(id)
 
         output$dfSelection <- shiny::renderUI({
+            file <- user_file()$datapath
             df_name <- get_dataframe(file)
 
             if (!is.null(df_name)) {
