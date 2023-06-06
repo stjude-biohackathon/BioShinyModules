@@ -13,6 +13,8 @@
 #' @returns A Shiny module.
 #' @examples
 #' plotPCA_demo()
+#' plotPCA_demo_2()
+#'
 #### Library needed #### ----------
 library(shiny)
 library(ggplot2)
@@ -29,7 +31,7 @@ library(RColorBrewer)
 #' @param title Character. Plot title
 #'
 #' @return GGplot PCA
-ggplotly_2Dpca <- function(df, sample_anno, sample_anno_col, PC1, PC2, pal, title) {
+ggplotly_2Dpca <- function(df, sample_anno, sample_anno_col, PC1, PC2, pal, title, font_size) {
     require(pcaMethods)
     require(ggplot2)
 
@@ -44,12 +46,13 @@ ggplotly_2Dpca <- function(df, sample_anno, sample_anno_col, PC1, PC2, pal, titl
         by = 0
     )
     p <- ggplot(pc1merged, aes(!!sym(PC1), !!sym(PC2), colour = !!sym(sample_anno_col))) +
-        geom_point() +
-        scale_color_brewer(palette = pal) +
-        stat_ellipse() +
-        xlab(paste(PC1, round((pc1@R2[PC1] * 100), digits = 1), "% of the variance")) +
-        ylab(paste(PC2, round((pc1@R2[PC2] * 100), digits = 1), "% of the variance")) +
-        ggtitle(label = title)
+            geom_point() +
+            scale_color_brewer(palette = pal) +
+            stat_ellipse() +
+            xlab(paste(PC1, round((pc1@R2[PC1] * 100), digits = 1), "% of the variance")) +
+            ylab(paste(PC2, round((pc1@R2[PC2] * 100), digits = 1), "% of the variance")) +
+            ggtitle(label = title) +
+            theme(text = element_text(size = as.numeric(font_size)))
     ggplotly(p)
 }
 
@@ -78,11 +81,13 @@ ggplotly_3Dpca <- function(df, sample_anno, sample_anno_col, pal, title) {
         color = sample_anno$sampleLabel, colors = pal,
         text = sample_anno$sampleName, hoverinfo = "text"
     ) %>%
-        layout(title = title, scene = list(
-            xaxis = list(title = "PC1"),
-            yaxis = list(title = "PC2"),
-            zaxis = list(title = "PC3")
-        ))
+        layout(title = list(title ),
+               scene = list(
+                       xaxis = list(title = "PC1" ),
+                       yaxis = list(title = "PC2" ),
+                       zaxis = list(title = "PC3" )
+                       )
+               )
 }
 
 palettes <- rownames(RColorBrewer::brewer.pal.info)
@@ -104,6 +109,9 @@ plotPCA_ui <- function(id) {
             choices = list("PC1", "PC2", "PC3"),
             selected = "PC2"
         ),
+        sliderInput(ns("fontSize"), "Select font size",
+                    min = 8, max = 18, value = 11
+        ),
         plotlyOutput(ns("plot"))
     )
 }
@@ -115,15 +123,22 @@ plotPCA_server <- function(id, df, sample_anno, sample_anno_col) {
         stopifnot(is.reactive(sample_anno))
         stopifnot(is.reactive(sample_anno_col))
 
+        fontSize <- reactive({
+                input$fontSize
+        })
+
         PCA_plot <- reactive({
             if (input$dim_select == "2D") {
                 ggplotly_2Dpca(
-                    df(), sample_anno(), sample_anno_col(),
-                    input$PC1, input$PC2,
-                    input$palette, input$title
-                )
+                        df(), sample_anno(), sample_anno_col(),
+                        input$PC1, input$PC2,
+                        input$palette, input$title, fontSize()
+                        )
             } else {
-                ggplotly_3Dpca(df(), sample_anno(), sample_anno_col(), input$palette, input$title)
+                ggplotly_3Dpca(
+                        df(), sample_anno(), sample_anno_col(),
+                        input$palette, input$title
+                        )
             }
         })
 
@@ -158,6 +173,7 @@ plotPCA_demo <- function() {
 }
 
 # to-do: download using exportPlot()
+# htmo download works for 3D plot, png and pdf needs to work for 2D plot
 plotPCA_demo_2 <- function() {
     source("exportPlot.R")
     load("../../data-raw/MS_2.rda")
