@@ -26,8 +26,8 @@ of heading, the conversion of string to factor, and the dataframe
 selection if multiple dataframe are present in one file (xlsx, rda).
 }
 \examples{
-\dontrun{
- dataImport_demo()
+\donttest{
+    dataImport_demo()
 }
 }
-\keyword{dataframe}
+\keyword{data}

@@ -25,7 +25,7 @@ usethis::use_package("shinyWidgets")
 #' @param to_char A boolean defining if all the dataset should be read as
 #' character.
 #' @returns A dataframe.
-#' @example
+#' @examples
 #' \donttest{
 #'     read_data("path/to/my/file.txt", sep=",", header=FALSE)
 #' }
@@ -93,7 +93,7 @@ read_data <- function(file, sep = ";", quote = "'", header = TRUE, df_name = NA,
 #' necessary the different dataframe / sheet names available.
 #' @param file The file path
 #' @returns A vector of all the dataframe name present.
-#' @example
+#' @examples
 #' \donttest{
 #'     get_dataframe("path/to/my/file.txt")
 #' }
@@ -134,9 +134,9 @@ get_dataframe <- function(file) {
 #' @returns A Shiny UI.
 #' @examples
 #' \donttest{
-#' dataImport_demo()
+#'     dataImport_demo()
 #' }
-#' @keywords dataframe
+#' @keywords data
 #' @export dataImport_ui
 dataImport_ui <- function(id, label = "Select data file") {
     ns <- shiny::NS(id)
@@ -175,9 +175,9 @@ dataImport_ui <- function(id, label = "Select data file") {
 #' @returns A Shiny server.
 #' @examples
 #' \donttest{
-#' dataImport_demo()
+#'     dataImport_demo()
 #' }
-#' @keywords dataframe
+#' @keywords data
 #' @export dataImport_server
 dataImport_server <- function(id) {
     shiny::moduleServer(id, function(input, output, session) {
@@ -221,8 +221,6 @@ dataImport_server <- function(id) {
         return(df)
     })
 }
-
-
 #### Demo function of the module #### ----------
 #' Data import demo
 #'
@@ -235,9 +233,9 @@ dataImport_server <- function(id) {
 #' @returns A Shiny App.
 #' @examples
 #' \dontrun{
-#' dataImport_demo()
+#'     dataImport_demo()
 #' }
-#' @keywords dataframe
+#' @keywords data
 #' @export dataImport_demo
 dataImport_demo <- function() {
     ui <- shiny::fluidPage(

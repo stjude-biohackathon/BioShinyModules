@@ -22,8 +22,8 @@ The server dynamically create a selection input if multiple
 dataframe are present in the file selected.
 }
 \examples{
-\dontrun{
- dataImport_demo()
+\donttest{
+    dataImport_demo()
 }
 }
-\keyword{dataframe}
+\keyword{data}

@@ -15,7 +15,8 @@ A data frame with 3 variables:
 \usage{
 data(hg19_chr_list)
 
-For further details, see \url{https://bioconductor.org/packages/chromhmmData/}
+For further details, see
+\url{https://bioconductor.org/packages/chromhmmData/}
 }
 \description{
 List of all dogs chromosome with start and end.
