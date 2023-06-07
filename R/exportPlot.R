@@ -72,7 +72,6 @@ exportPlot_server <- function(id, my_plot, is_plotly = FALSE) {
             },
             content = function(file) {
                 if (is_plotly) {
-                    require(plotly)
                     if (input$ext == "html") {
                         htmlwidgets::saveWidget(file = file, my_plot())
                     } else {
@@ -109,9 +108,6 @@ exportPlot_server <- function(id, my_plot, is_plotly = FALSE) {
 #' @keywords hplot
 #' @export exportPlot_demo
 exportPlot_demo <- function() {
-    source("plotHist.R")
-    source("../dataImport.R")
-    source("modules/selectVar.R")
     ui <- shiny::fluidPage(
         dataImport_ui("datafile", "User data"),
         plotHist_ui("hist"),
