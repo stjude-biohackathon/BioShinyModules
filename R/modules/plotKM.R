@@ -15,7 +15,7 @@ usethis::use_package("ggsci")
 usethis::use_package("RColorBrewer")
 usethis::use_package("ggrepel")
 
-
+source("exportPlot.R")
 
 #### UI function of the module #### ----------
 #' PlotKM ui
@@ -41,7 +41,6 @@ usethis::use_package("ggrepel")
 #' @export plotKM_ui
 
 plotKM_ui <- function(id, data) {
-  source("exportPlot.R")
     ns <- shiny::NS(id)
     shiny::tagList(
       shiny::sidebarPanel(
