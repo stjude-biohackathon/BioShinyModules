@@ -1,13 +1,12 @@
 test_that("find_vars works", {
-  f_path <- file.path(system.file("data-raw", package = "BioShinyModules"),
-    "MS_2.rda")
-  df <- read_data(f_path, sep = ",", df_name = "df")
-  expect_equal(dim(df), c(164, 32))
+  f_path <- file.path(system.file("data", package = "BioShinyModules"),
+    "hg19_chr_list.rda")
+  df <- read_data(f_path, df_name = "hg19_chr_list")
+  expect_equal(dim(df), c(21, 3))
   col_chr <- find_vars(df, filter = is.numeric)
-  expect_equal(length(col_chr), 32)
+  expect_equal(col_chr, c("start", "end"))
   col_chr <- find_vars(df, filter = is.character)
   expect_equal(length(col_chr), 0)
-  df[, 1] <- cut(df[, 1], 3)
   col_chr <- find_vars(df, filter = is.factor)
-  expect_equal(length(col_chr), 1)
+  expect_equal(col_chr, "chr")
 })
