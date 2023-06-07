@@ -120,9 +120,6 @@ plotKM_server <- function(id, data) {
   
   moduleServer(id, function(input, output, session) {
     
-    
-    source("exportPlot.R")
-    
     ns <- shiny::NS(id)
     
     output$rendContCutPoint <- shiny::renderUI({
