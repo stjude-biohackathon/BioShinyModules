@@ -5,3 +5,5 @@
 .RData
 /R/app/*
 /R/modules/*
+^doc$
+^Meta$
