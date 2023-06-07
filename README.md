@@ -31,6 +31,7 @@ The aim is to provide simple yet effective shiny sub-unit to factorise your code
 The following modules are available:
 
 - dataImport: import one dataframe from csv, xlsx, xls or rda
+- selectVar: select a column based on a dataframe and filtering
 
 ## Organisation
 
