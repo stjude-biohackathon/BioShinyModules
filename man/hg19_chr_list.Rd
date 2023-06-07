@@ -14,8 +14,6 @@ A data frame with 3 variables:
 }
 \usage{
 data(hg19_chr_list)
-
-For further details, see \url{https://bioconductor.org/packages/chromhmmData/}
 }
 \description{
 List of all dogs chromosome with start and end.
@@ -25,5 +23,8 @@ All 21 humans' chromosomes are here listed.
 The start and end in base pair are also present for each of them.
 Data come from the chromhmmData library, a start field is added ( = 1) and
 only the 21 first chromosomes are kept.
+}
+\references{
+https://bioconductor.org/packages/chromhmmData/
 }
 \keyword{datasets}

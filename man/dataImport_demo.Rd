@@ -19,7 +19,7 @@ This demo allow the user to select a dataframe from a file and render it.
 }
 \examples{
 \dontrun{
- dataImport_demo()
+    dataImport_demo()
 }
 }
-\keyword{dataframe}
+\keyword{data}

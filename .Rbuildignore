@@ -1,7 +1,10 @@
-/documentation
-/data-raw
+^documentation
+^data-raw/*
 ..Rcheck
 .Rhistory
 .RData
-/R/app/*
-/R/modules/*
+^R/app/*
+^R/modules/*
+^doc$
+^Meta$
+^archives/*

@@ -27,7 +27,7 @@ selection if multiple dataframe are present in one file (xlsx, rda).
 }
 \examples{
 \dontrun{
- dataImport_demo()
+    dataImport_demo()
 }
 }
-\keyword{dataframe}
+\keyword{data}

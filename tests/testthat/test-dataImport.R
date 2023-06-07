@@ -1,23 +1,13 @@
 test_that("read_data works", {
-  f_path <- file.path(system.file("data-raw", package = "BioShinyModules"),
-    "Limma.csv")
-  df <- read_data(f_path, sep = ",")
-  expect_equal(dim(df), c(15095, 7))
-
-  f_path <- file.path(system.file("data-raw", package = "BioShinyModules"),
-    "MS_2.rda")
-  df <- read_data(f_path, sep = ",", df_name = "df")
-  expect_equal(dim(df), c(164, 32))
+  f_path <- file.path(system.file("data", package = "BioShinyModules"),
+    "hg19_chr_list.rda")
+  df <- read_data(f_path, df_name = "hg19_chr_list")
+  expect_equal(dim(df), c(21, 3))
 })
 
 test_that("get_dataframe works", {
-  f_path <- file.path(system.file("data-raw", package = "BioShinyModules"),
-    "Limma.csv")
+  f_path <- file.path(system.file("data", package = "BioShinyModules"),
+    "hg19_chr_list.rda")
   df_name <- get_dataframe(f_path)
-  expect_equal(df_name, NULL)
-
-  f_path <- file.path(system.file("data-raw", package = "BioShinyModules"),
-    "MS_2.rda")
-  df_name <- get_dataframe(f_path)
-  expect_equal(df_name, c("df", "feature_meta", "sample_meta"))
+  expect_equal(df_name, "hg19_chr_list")
 })

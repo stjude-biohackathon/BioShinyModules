@@ -61,6 +61,7 @@ report()
 To build the package [Rtools](https://cran.r-project.org/bin/windows/Rtools/rtools42/rtools.html) will to be installed.
 
 The package will need to pass the following test:
+
 ```r
 devtools::build()
 devtools::check()

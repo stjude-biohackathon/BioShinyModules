@@ -14,9 +14,9 @@
 #' \item{\code{end}}{Base pair end number}
 #' }
 #'
-#' @usage data(hg19_chr_list)
+#' @usage
+#' data(hg19_chr_list)
 #'
-#' For further details, see
-#' \url{https://bioconductor.org/packages/chromhmmData/}
+#' @references https://bioconductor.org/packages/chromhmmData/
 #'
 "hg19_chr_list"

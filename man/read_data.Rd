@@ -41,4 +41,9 @@ Read dataframe based on the extension of the file
 This function detect the extension of the file and proceed to use
 the according function to read it with the parameters given by the user.
 }
-\keyword{dataframe}
+\examples{
+\dontrun{
+    read_data("path/to/my/file.txt", sep=",", header=FALSE)
+}
+}
+\keyword{data}
