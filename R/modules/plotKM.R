@@ -380,8 +380,7 @@ plotKM_server <- function(id, data) {
     survPlotdnld_react <- reactive({
       
       p <- survPlot_react()
-      return(p$plot)
-      
+      p$plot
     })
     
       
