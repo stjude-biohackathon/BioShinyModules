@@ -18,7 +18,7 @@ A Shiny UI.
 R Shiny module to select a variable that fits a criterion
 }
 \examples{
-\donttest{
+\dontrun{
 selectVar_demo()
 }
 }

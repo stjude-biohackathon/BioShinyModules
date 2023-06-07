@@ -28,7 +28,7 @@ When the plot is generated with plotly, set is_plotly to TRUE
 and export it to html.
 }
 \examples{
-\donttest{
+\dontrun{
     exportPlot_demo()
 }
 }

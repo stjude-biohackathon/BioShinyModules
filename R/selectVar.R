@@ -24,7 +24,7 @@ find_vars <- function(df, filter) {
 #' @param label Title to prompt to the user.
 #' @returns A Shiny UI.
 #' @examples
-#' \donttest{
+#' \dontrun{
 #' selectVar_demo()
 #' }
 #' @export selectVar_ui
@@ -43,7 +43,7 @@ selectVar_ui <- function(id, label = "Choose a column") {
 #' @details The choice are updated in the server with the find_vars
 #' function.
 #' @examples
-#' \donttest{
+#' \dontrun{
 #' selectVar_demo()
 #' }
 #' @export selectVar_server
@@ -68,7 +68,7 @@ selectVar_server <- function(id, df, filter = is.numeric) {
 #' @returns A Shiny app.
 #'
 #' @examples
-#' \donttest{
+#' \dontrun{
 #' selectVar_demo(filter = is.numeric)
 #' }
 #' @export selectVar_demo

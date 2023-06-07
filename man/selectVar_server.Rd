@@ -24,7 +24,7 @@ The choice are updated in the server with the find_vars
 function.
 }
 \examples{
-\donttest{
+\dontrun{
 selectVar_demo()
 }
 }

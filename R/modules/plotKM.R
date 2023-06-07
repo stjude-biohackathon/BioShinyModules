@@ -34,7 +34,7 @@ source("exportPlot.R")
 #' @param data A data frame
 #' @returns A Shiny UI.
 #' @examples
-#' \donttest{
+#' \dontrun{
 #' plotKM_demo()
 #' }
 #' @keywords plot
@@ -110,7 +110,7 @@ plotKM_ui <- function(id, data) {
 #' @param data A data frame
 #' @returns A Shiny server.
 #' @examples
-#' \donttest{
+#' \dontrun{
 #' plotKM_demo()
 #' }
 #' @keywords plot

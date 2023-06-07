@@ -17,7 +17,7 @@ This demo allow to export an histogram plot from a
 dataframe selected before hand.
 }
 \examples{
-\donttest{
+\dontrun{
     exportPlot_demo()
 }
 }

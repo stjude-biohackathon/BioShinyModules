@@ -22,7 +22,7 @@ The server dynamically create a selection input if multiple
 dataframe are present in the file selected.
 }
 \examples{
-\donttest{
+\dontrun{
     dataImport_demo()
 }
 }

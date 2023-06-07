@@ -17,7 +17,7 @@ This demo allow to export an heatmap plot from a
 the example data MS_2.rda
 }
 \examples{
-\donttest{
+\dontrun{
     exportPlot_demo_2()
 }
 }

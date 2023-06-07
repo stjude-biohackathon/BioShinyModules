@@ -26,7 +26,7 @@ usethis::use_package("shinyWidgets")
 #' character.
 #' @returns A dataframe.
 #' @examples
-#' \donttest{
+#' \dontrun{
 #'     read_data("path/to/my/file.txt", sep=",", header=FALSE)
 #' }
 #' @keywords data
@@ -94,7 +94,7 @@ read_data <- function(file, sep = ";", quote = "'", header = TRUE, df_name = NA,
 #' @param file The file path
 #' @returns A vector of all the dataframe name present.
 #' @examples
-#' \donttest{
+#' \dontrun{
 #'     get_dataframe("path/to/my/file.txt")
 #' }
 #' @keywords dataframe
@@ -133,7 +133,7 @@ get_dataframe <- function(file) {
 #' @param label A string use to prompt the user
 #' @returns A Shiny UI.
 #' @examples
-#' \donttest{
+#' \dontrun{
 #'     dataImport_demo()
 #' }
 #' @keywords data
@@ -174,7 +174,7 @@ dataImport_ui <- function(id, label = "Select data file") {
 #' @param id A string.
 #' @returns A Shiny server.
 #' @examples
-#' \donttest{
+#' \dontrun{
 #'     dataImport_demo()
 #' }
 #' @keywords data

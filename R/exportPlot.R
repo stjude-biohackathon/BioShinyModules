@@ -23,7 +23,7 @@ usethis::use_package("htmlwidgets")
 #' @param id A string.
 #' @returns A Shiny UI.
 #' @examples
-#' \donttest{
+#' \dontrun{
 #'     exportPlot_demo()
 #' }
 #' @keywords hplot
@@ -58,7 +58,7 @@ exportPlot_ui <- function(id) {
 #' @param is_plotly Boolean defining if the plot is interactiv or not.
 #' @returns A Shiny UI.
 #' @examples
-#' \donttest{
+#' \dontrun{
 #'     exportPlot_demo()
 #' }
 #' @keywords hplot
@@ -102,7 +102,7 @@ exportPlot_server <- function(id, my_plot, is_plotly = FALSE) {
 #'
 #' @returns A Shiny APP.
 #' @examples
-#' \donttest{
+#' \dontrun{
 #'     exportPlot_demo()
 #' }
 #' @keywords hplot
@@ -136,7 +136,7 @@ exportPlot_demo <- function() {
 #'
 #' @returns A Shiny app.
 #' @examples
-#' \donttest{
+#' \dontrun{
 #'     exportPlot_demo_2()
 #' }
 #' @keywords hplot
