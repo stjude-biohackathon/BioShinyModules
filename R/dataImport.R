@@ -55,25 +55,35 @@ read_data <- function(file, sep = ";", quote = "'", header = TRUE, df_name = NA,
             )
         } else if (ext %in% c("xls", "xlsx")) {
             sheets_present <- readxl::excel_sheets(file)
-            shiny::req(df_name)
-            if (df_name %in% sheets_present) {
-                df <- as.data.frame(readxl::read_excel(file,
-                    sheet = df_name,
-                    col_names = header,
-                    col_types = col_types
-                ))
+            if (is.na(df_name)) {
+              message("Needs the name of the sheet to use 'df_name'")
+              df <- NULL
             } else {
+              shiny::req(df_name)
+              if (df_name %in% sheets_present) {
+                df <- as.data.frame(readxl::read_excel(file,
+                                                       sheet = df_name,
+                                                       col_names = header,
+                                                       col_types = col_types
+                ))
+              } else {
                 message("Error: Sheet selected isn't in file")
                 df <- NULL
+              }
             }
         } else if (ext == "rda") {
             all_data <- base::load(file)
-            shiny::req(df_name)
-            if (df_name %in% all_data) {
-                df <- get(df_name)
+            if (is.na(df_name)) {
+              message("Needs the name of the dataframe to use 'df_name'")
+              df <- NULL
             } else {
-                message("Error: Sheet selected isn't in file")
-                df <- NULL
+              shiny::req(df_name)
+              if (df_name %in% all_data) {
+                  df <- get(df_name)
+              } else {
+                  message("Error: dataframe selected isn't in file")
+                  df <- NULL
+              }
             }
         }
         as.data.frame(unclass(df),
