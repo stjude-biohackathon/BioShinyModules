@@ -41,6 +41,7 @@ usethis::use_package("ggrepel")
 #' @export plotKM_ui
 
 plotKM_ui <- function(id, data) {
+  source("exportPlot.R")
     ns <- shiny::NS(id)
     shiny::tagList(
       shiny::sidebarPanel(
@@ -82,7 +83,8 @@ plotKM_ui <- function(id, data) {
         fluidRow(
           column(8,
                  shinyjqui::jqui_resizable(shiny::plotOutput(ns("survPlot"), height = "500px")),
-                 shiny::uiOutput(ns("rendSurvPlotDnldButton"))
+                 exportPlot_ui(ns("saveSurv"))
+                 #shiny::uiOutput(ns("rendSurvPlotDnldButton"))
                  ),
           column(4,
                  shiny::tableOutput(ns("CoxHRSummary")),
@@ -94,6 +96,7 @@ plotKM_ui <- function(id, data) {
       )
     )
 }
+
 
 #### Server function of the module #### ----------
 #' PlotKM server
@@ -117,6 +120,9 @@ plotKM_ui <- function(id, data) {
 plotKM_server <- function(id, data) {
   
   moduleServer(id, function(input, output, session) {
+    
+    
+    source("exportPlot.R")
     
     ns <- shiny::NS(id)
     
@@ -161,16 +167,6 @@ plotKM_server <- function(id, data) {
       selectInput(ns("ColorPalSelect"),"Color Palette:", choices = ColorList)
       
     })
-    
-    
-    ## if input file is choosen 
-    #inputData <- reactive({
-    #                          req(input$inputFileSurvival)
-    #                          datTmp <- read_tsv(input$methInFile$datapath) 
-    #                         return(datTmp)
-    #                     })
-    
-    
     
     ## `survDat` return the dataframe useful to plot survival curves 
     survDat <- shiny::eventReactive(input$click_submit, {
@@ -240,28 +236,6 @@ plotKM_server <- function(id, data) {
       
     })
     
-    #shiny::observeEvent(input$click_submit, {
-    #  
-    #  output$CoxHRSummary <- shiny::renderTable({
-    #    
-    #    SurvTab <- SurvDataTab_react()
-    #    groupVar <- input$group_var
-    #    SurvTab2 <- SurvTab %>% 
-    #      gtsummary::tbl_regression(exp = TRUE) %>%
-    #      as_gt()
-    #    
-    #    SurvTabDF <- as.data.frame(SurvTab2)
-    #    
-    #    SurvTabDF <- SurvTabDF %>%
-    #      dplyr::select(label,estimate,ci,p.value)
-    #    colnames(SurvTabDF) <- c("Characteristic","Hazard Ratio","95% Confidence Interval","P.Value")
-    #    
-    #    SurvTabDF
-    #    
-    #  })
-    #  
-    #})
-    
     CoxPHSummary_react <- shiny::eventReactive(input$click_submit, {
       
       SurvTab <- SurvDataTab_react()
@@ -286,29 +260,6 @@ plotKM_server <- function(id, data) {
       text
       
     })
-    
-    #shiny::observeEvent(input$click_submit, {
-    #  
-    #  output$CoxPHSummary <- shiny::renderPrint({
-    #    
-    #    SurvTab <- SurvDataTab_react()
-    #    groupVar <- input$group_var
-    #    SurvTabPH <- capture.output(summary(SurvTab))
-    #    SurvTabZPH <- capture.output(cox.zph(SurvTab))
-    #    
-    #    con_line <- grep("^Concordance=",SurvTabPH,value = T)
-    #    lik_line <- grep("^Likelihood ratio test=",SurvTabPH,value = T)
-    #    wal_line <- grep("^Wald test",SurvTabPH,value = T)
-    #    sco_line <- grep("^Score ",SurvTabPH,value = T)
-    #    
-    #    text <- paste("CoxH Summary:",con_line,lik_line,wal_line,sco_line,"","Proportional Hazards assumption:",
-    #                  SurvTabZPH[1],SurvTabZPH[2],SurvTabZPH[3],sep = "\n")
-    #    cat(text)
-    #    
-    #    
-    #  })
-    #  
-    #})
     
     survTable_react <- shiny::eventReactive(input$click_submit, {
       
@@ -350,23 +301,6 @@ plotKM_server <- function(id, data) {
       
     })
     
-    #survPlot_reactVal <- reactiveVal()
-    #
-    #observeEvent(input$click_submit, {
-    #  
-    #  survData_local <- survDat()
-    #  timeVar <- input$time_var
-    #  eventVar <- input$event_var
-    #  groupVar <- input$group_var
-    #  
-    #  form <- paste("survival::Surv(",timeVar,",",eventVar,") ~ ",groupVar,sep = "")
-    #  form2 <- as.formula(form)
-    #  sfit <- eval(substitute(survival::survfit(form2,data = survData_local, type="kaplan-meier")))
-    #  names(sfit$strata) <- gsub(paste0(groupVar,"="),"",names(sfit$strata))
-    #  survPlot_reactVal(sfit)
-    #  
-    #})
-    
     SurvPlotVariables <- shiny::eventReactive(input$click_submit, {
       
       timeVar <- input$time_var
@@ -377,6 +311,8 @@ plotKM_server <- function(id, data) {
       list(timeVar = timeVar, eventVar = eventVar, groupVar = groupVar, groupVarType = groupVarType)
       
     })
+    
+    #survPlot_reacVal <- reactiveVal()
     
     survPlot_react <- shiny::reactive({
       
@@ -445,6 +381,13 @@ plotKM_server <- function(id, data) {
       
     })
     
+    survPlotdnld_react <- reactive({
+      
+      p <- survPlot_react()
+      return(p$plot)
+      
+    })
+    
       
     output$survPlot <- shiny::renderPlot({
       
@@ -452,6 +395,8 @@ plotKM_server <- function(id, data) {
       p
       
     })
+    
+    exportPlot_server("saveSurv",survPlotdnld_react)
       
   })
   
@@ -482,11 +427,8 @@ plotKM_demo <- function() {
   )
   
   server <- function(input, output, session) {
-    
     plotKM_server("KMplot", ExampleLungData)
-    
   }
-  
   shiny::shinyApp(ui, server)
 }
 
