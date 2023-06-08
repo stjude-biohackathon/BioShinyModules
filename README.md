@@ -30,8 +30,13 @@ The aim is to provide simple yet effective shiny sub-unit to factorise your code
 
 The following modules are available:
 
-- dataImport: import one dataframe from csv, xlsx, xls or rda
-- selectVar: select a column based on a dataframe and filtering
+- Data Management
+    - dataImport: import one dataframe from csv, xlsx, xls or rda
+    - selectVar: select a column based on a dataframe and filtering
+- Export
+    - exportPlot: export given plot in different file format
+- Plots
+    - plotHist: create a histogram from a numeric variable
 
 ## Organisation
 
