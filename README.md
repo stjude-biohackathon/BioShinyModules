@@ -39,7 +39,7 @@ For information about the organisation of this project please find the [organisa
 
 ### Contribution
 
-Contribution guidelines can be found in the [contribution.md](/documentation/contribution.md) file.
+Contribution guidelines can be found in the [CONTRIBUTING.md](/documentation/CONTRIBUTING.md) file.
 
 ### Project board
 
