@@ -15,6 +15,8 @@
 usethis::use_package("shiny")
 usethis::use_package("heatmaply")
 usethis::use_package("RColorBrewer")
+usethis::use_package("stats")
+usethis::use_package("grDevices")
 
 #### Function needed to work #### ----------
 #' plot Heatmap
@@ -34,8 +36,7 @@ usethis::use_package("RColorBrewer")
 #' @param title Character
 #'
 #' @return A heatmap plot generated with pheatmap
-#' @export
-
+#' @export plotHeatmaply
 plotHeatmaply <- function(df, type = c("heatmap", "correlation", "distance"),
                           direction = ifelse(type == "heatmap", NULL,
                             c("col", "row")
@@ -80,10 +81,10 @@ plotHeatmaply <- function(df, type = c("heatmap", "correlation", "distance"),
     ))
 
     if (direction == "row") {
-      mat <- cor(t(df), method = select_corr)
+      mat <- stats::cor(t(df), method = select_corr)
       select_scale <- "none"
     } else if (direction == "col") {
-      mat <- cor(df, method = select_corr)
+      mat <- stats::cor(df, method = select_corr)
       select_scale <- "none"
     }
   } else if (type == "distance") {
@@ -93,21 +94,21 @@ plotHeatmaply <- function(df, type = c("heatmap", "correlation", "distance"),
     ))
 
     if (direction == "row") {
-      mat <- as.matrix(dist(df, method = select_dist))
+      mat <- as.matrix(stats::dist(df, method = select_dist))
       select_scale <- "none"
     } else if (direction == "col") {
-      mat <- as.matrix(dist(t(df), method = select_dist))
+      mat <- as.matrix(stats::dist(t(df), method = select_dist))
       select_scale <- "none"
     }
   }
 
 
   # select colors for hm and anno
-  hm_color <- colorRampPalette(brewer.pal(n = palettes$maxcolors[rownames(palettes) == pal],
+  hm_color <- grDevices::colorRampPalette(RColorBrewer::brewer.pal(n = palettes$maxcolors[rownames(palettes) == pal],
     name = pal))(256)
 
   # draw hm
-  heatmaply(mat,
+  heatmaply::heatmaply(mat,
     colors = hm_color,
     scale = select_scale,
     dendrogram = draw_dendrogram,
