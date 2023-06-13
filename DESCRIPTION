@@ -20,7 +20,11 @@ Imports:
     htmlwidgets,
     sessioninfo,
     heatmaply,
-    RColorBrewer
+    RColorBrewer,
+    pcaMethods,
+    plotly,
+    stats,
+    grDevices
 Description: This comprehensive R package is designed to empower data analysis and exploration
 		by providing a collection of interactive Shiny modules. With a wide range of visualization
 		tools including heatmaps, PCA plots, violin plots, scatter plots, box plots, survival analysis,
