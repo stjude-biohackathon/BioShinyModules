@@ -66,3 +66,17 @@ styler:::set_style_transformers()
 - Make it customisable (color, font, ...)
 - Make it interactive (ggplot and plotly)
   - Add some hovering informations
+
+## Building vignettes
+
+To build de vignettes you will need to have pandoc installed on the computer.
+For either go to the [pandoc website](https://pandoc.org/installing.html) or use:
+
+```R
+installr::install.pandoc()
+```
+
+When done it may be necessary to add the path to the executable to R environment:
+```R
+Sys.setenv(RSTUDIO_PANDOC="<PATH_TO_PANDOC>")
+```
