@@ -161,7 +161,7 @@ plotPCA_server <- function(id, df, sample_anno, sample_anno_col) {
 #### Demo function of the module #### ----------
 # TODO add documentation
 plotPCA_demo <- function() {
-  load("../../data-raw/MS_2.rda")
+  load("../data-raw/MS_2.rda")
   df <- df
   sample_anno <- sample_meta
   sample_anno_col <- "sampleLabel"
@@ -184,8 +184,7 @@ plotPCA_demo <- function() {
 # TODO: download using exportPlot()
 # htmo download works for 3D plot, png and pdf needs to work for 2D plot
 plotPCA_demo_2 <- function() {
-  source("exportPlot.R")
-  load("../../data-raw/MS_2.rda")
+  load("../data-raw/MS_2.rda")
   df <- df
   sample_anno <- sample_meta
   sample_anno_col <- "sampleLabel"
