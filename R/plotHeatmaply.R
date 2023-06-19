@@ -185,6 +185,7 @@ plotHeatmaply_server <- function(id, df) {
     Heatmap_plot <- eventReactive(input$click_submit, {
       scale <- NULL
       direction <- NULL
+      corr <- NULL
       dist <- NULL
       pal <- NULL
       if (input$plot_type == "heatmap") {
@@ -203,6 +204,9 @@ plotHeatmaply_server <- function(id, df) {
       }
       plotHeatmaply(df(),
         type = input$plot_type,
+        direction = direction,
+        select_dist = dist,
+        select_corr = corr,
         select_scale = scale,
         pal = pal,
         hclust_method = input$select_hclust,
@@ -244,6 +248,7 @@ plotHeatmap_demo <- function() {
 # TODO add doc
 plotHeatmap_demo_2 <- function() {
   load("../data-raw/MS_2.rda")
+  source("exportPlot.R")
   df <- df
 
   ui <- fluidPage(
@@ -258,7 +263,7 @@ plotHeatmap_demo_2 <- function() {
         df
       })
     )
-    exportPlot_server("saveheatmap", my_plot, is_plotly = FALSE)
+    exportPlot_server("saveheatmap", my_plot, is_plotly = TRUE)
   }
   shinyApp(ui, server)
 }
