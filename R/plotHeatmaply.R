@@ -22,50 +22,32 @@ usethis::use_package("grDevices")
 #' plot Heatmap
 #'
 #' @param df A data frame
-#' @param type Character, choose from one of three values for plot types
-#' @param direction
-#' @param select_dist Character
-#' @param select_corr Character
-#' @param select_scale Character
-#' @param draw_dendrogram Character
-#' @param showRowDendrogram Boolean
-#' @param showColDendrogram Boolean
-#' @param showRowLabel Boolean
-#' @param showColLabel Boolean
-#' @param pal Character
-#' @param title Character
+#' @param type Character to choose from one of three types: "heatmap",
+#' "correlation", "distance".
+#' @param direction Character taking the following values: "col" or "row" for
+#' correlation or distance types plot.
+#' @param select_dist Method used to compute the distance (dissimilarity)
+#' between both rows and columns that can take the following values :
+#' "euclidean", "maximum", "manhattan", "canberra", "binary", "minkowski". To be
+#' use with type distance.
+#' @param select_corr Correlation analysis model to use that can take the
+#' following values : "pearson", "kendall", "spearman" to be use with type
+#' correlation.
+#' @param select_scale Character indicating if the values should be centered and
+#' scaled in either the row direction or the column direction, or none.
+#' The default is "none".
+#' @param pal Color palette to use. Obtained from
+#' `RColorBrewer::brewer.pal.info`
+#' @param ... Other parameters to be passed to  `heatmaply()`
 #'
 #' @return A heatmap plot generated with pheatmap
 #' @export plotHeatmaply
-plotHeatmaply <- function(df, type = c("heatmap", "correlation", "distance"),
-                          direction = ifelse(type == "heatmap", NULL,
-                            c("col", "row")
-                          ),
-                          select_dist = ifelse(type == "distance",
-                            c(
-                              "euclidean", "maximum", "manhattan",
-                              "canberra", "binary", "minkowski"
-                            ), NULL
-                          ),
-                          select_corr = ifelse(type == "correlation",
-                            c("pearson", "kendall", "spearman"), NULL
-                          ),
-                          select_hclust = c(
-                            "ward.D", "ward.D2", "single", "complete",
-                            "average", "mcquitty", "median", "centroid"
-                          ),
-                          select_scale = ifelse(type == "heatmap",
-                            c("column", "row"), "none"
-                          ),
-                          draw_dendrogram = c("none", "row", "column", "both"),
-                          showRowDendrogram = TRUE,
-                          showColDendrogram = TRUE,
-                          showRowLabel = TRUE,
-                          showColLabel = TRUE,
-                          fontsize_col,
-                          fontsize_row,
+plotHeatmaply <- function(df, type, direction = NULL,
+                          select_dist = NULL,
+                          select_corr = NULL,
+                          select_scale = "none",
                           pal,
-                          title) {
+                          ...) {
   df <- data.frame(df)
 
   if (type == "heatmap") {
@@ -104,6 +86,7 @@ plotHeatmaply <- function(df, type = c("heatmap", "correlation", "distance"),
 
 
   # select colors for hm and anno
+  palettes <- RColorBrewer::brewer.pal.info
   hm_color <- grDevices::colorRampPalette(RColorBrewer::brewer.pal(n = palettes$maxcolors[rownames(palettes) == pal],
     name = pal))(256)
 
@@ -111,14 +94,8 @@ plotHeatmaply <- function(df, type = c("heatmap", "correlation", "distance"),
   heatmaply::heatmaply(mat,
     colors = hm_color,
     scale = select_scale,
-    dendrogram = draw_dendrogram,
-    show_dendrogram = c(showRowDendrogram, showColDendrogram),
     dist_method = NULL,
-    hclust_method = select_hclust,
-    showticklabels = c(showRowLabel, showColLabel),
-    fontsize_col = fontsize_col,
-    fontsize_row = fontsize_row,
-    main = title
+    ...
   )
 }
 
@@ -183,9 +160,6 @@ plotHeatmaply_ui <- function(id) {
       ),
       selected = "complete"
     ),
-    selectInput(ns("dendrogram"), "Draw Dendrogram",
-      choices = c("none", "row", "column", "both"), selected = "both"
-    ),
     checkboxInput(ns("showRowDendrogram"), "Show row dendrogram", value = TRUE),
     checkboxInput(ns("showColDendrogram"), "Show col dendrogram", value = TRUE),
     checkboxInput(ns("showRowLabel"), "Show row label", value = TRUE),
@@ -198,7 +172,7 @@ plotHeatmaply_ui <- function(id) {
     ),
     textInput(ns("title"), "Title of the graph", value = ""),
     actionButton(ns("click_submit"), label = "Submit"),
-    plotOutput(ns("plot"))
+    plotlyOutput(ns("plot"))
   )
 }
 
@@ -211,6 +185,7 @@ plotHeatmaply_server <- function(id, df) {
     Heatmap_plot <- eventReactive(input$click_submit, {
       scale <- NULL
       direction <- NULL
+      corr <- NULL
       dist <- NULL
       pal <- NULL
       if (input$plot_type == "heatmap") {
@@ -224,23 +199,25 @@ plotHeatmaply_server <- function(id, df) {
         direction <- input$corr_direction
         corr <- input$corr
         pal <- input$corr_palette
+      } else {
+          message("Error")
       }
       plotHeatmaply(df(),
         type = input$plot_type,
+        direction = direction,
+        select_dist = dist,
+        select_corr = corr,
         select_scale = scale,
         pal = pal,
-        select_hclust = input$select_hclust,
-        draw_dendrogram = input$dendrogram,
-        showRowDendrogram = input$showRowDendrogram,
-        showColDendrogram = input$showColDendrogram,
-        showRowLabel = input$showRowLabel,
-        showColLabel = input$showColLabel,
+        hclust_method = input$select_hclust,
+        show_dendrogram = c(input$showRowDendrogram,input$showColDendrogram),
+        showticklabels = c(input$showRowLabel,input$showColLabel),
         fontsize_col = input$fontsize_col,
         fontsize_row = input$fontsize_row,
-        title = input$title
+        main = input$title
       )
     })
-    output$plot <- renderPlot({
+    output$plot <- renderPlotly({
       Heatmap_plot()
     })
     return(Heatmap_plot)
@@ -250,7 +227,7 @@ plotHeatmaply_server <- function(id, df) {
 #### Demo function of the module #### ----------
 # TODO add doc
 plotHeatmap_demo <- function() {
-  load("../../data-raw/MS_2.rda")
+  load("../data-raw/MS_2.rda")
   df <- df
 
   ui <- fluidPage(
@@ -270,7 +247,8 @@ plotHeatmap_demo <- function() {
 
 # TODO add doc
 plotHeatmap_demo_2 <- function() {
-  load("../../data-raw/MS_2.rda")
+  load("../data-raw/MS_2.rda")
+  source("exportPlot.R")
   df <- df
 
   ui <- fluidPage(
