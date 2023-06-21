@@ -227,8 +227,8 @@ plotHeatmaply_server <- function(id, df) {
 #### Demo function of the module #### ----------
 # TODO add doc
 plotHeatmap_demo <- function() {
-  load("../data-raw/MS_2.rda")
-  df <- df
+  load("../data-raw/MS_1.rda")
+  df <- ic_bps
 
   ui <- fluidPage(
     plotHeatmaply_ui("plotHeatmaply")
@@ -247,9 +247,9 @@ plotHeatmap_demo <- function() {
 
 # TODO add doc
 plotHeatmap_demo_2 <- function() {
-  load("../data-raw/MS_2.rda")
+  load("../data-raw/MS_1.rda")
   source("exportPlot.R")
-  df <- df
+  df <- ic_bps
 
   ui <- fluidPage(
     plotHeatmaply_ui("plotHeatmaply"),
