@@ -81,8 +81,8 @@ ggplotly_3Dpca <- function(df, sample_anno, sample_anno_col, pal, title) {
 
   plot_ly(pc1merged,
     x = ~PC1, y = ~PC2, z = ~PC3, type = "scatter3d",
-    color = sample_anno$sampleLabel, colors = pal,
-    text = sample_anno$sampleName, hoverinfo = "text"
+    color = labels, colors = pal,
+    text = rownames(sample_anno), hoverinfo = "text"
   ) %>%
     layout(
       title = list(title),
@@ -161,10 +161,10 @@ plotPCA_server <- function(id, df, sample_anno, sample_anno_col) {
 #### Demo function of the module #### ----------
 # TODO add documentation
 plotPCA_demo <- function() {
-  load("../data-raw/MS_2.rda")
-  df <- df
+  load("../data-raw/MS_1.rda")
+  df <- ic_bps
   sample_anno <- sample_meta
-  sample_anno_col <- "sampleLabel"
+  sample_anno_col <- "Label"
 
   ui <- fluidPage(plotPCA_ui("x"))
 
@@ -184,10 +184,11 @@ plotPCA_demo <- function() {
 # TODO: download using exportPlot()
 # htmo download works for 3D plot, png and pdf needs to work for 2D plot
 plotPCA_demo_2 <- function() {
-  load("../data-raw/MS_2.rda")
-  df <- df
+  load("../data-raw/MS_1.rda")
+  source("exportPlot.R")
+  df <- ic_bps
   sample_anno <- sample_meta
-  sample_anno_col <- "sampleLabel"
+  sample_anno_col <- "Label"
 
   ui <- fluidPage(
     plotPCA_ui("x"),
