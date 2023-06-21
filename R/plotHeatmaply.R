@@ -11,12 +11,7 @@
 #' @examples
 #' plotHeatmaply_demo()
 #' plotHeatmaply_demo_2()
-#### Library needed #### ----------
-usethis::use_package("shiny")
-usethis::use_package("heatmaply")
-usethis::use_package("RColorBrewer")
-usethis::use_package("stats")
-usethis::use_package("grDevices")
+
 
 #### Function needed to work #### ----------
 #' plot Heatmap

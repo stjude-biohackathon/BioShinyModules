@@ -2,57 +2,59 @@
 % Please edit documentation in R/plotHeatmaply.R
 \name{plotHeatmaply}
 \alias{plotHeatmaply}
-\title{plot Heatmap}
+\title{R Shiny module to generate a heatmap/distance/correlation using `heatmaply`}
 \usage{
 plotHeatmaply(
   df,
-  type = c("heatmap", "correlation", "distance"),
-  direction = ifelse(type == "heatmap", NULL, c("col", "row")),
-  select_dist = ifelse(type == "distance", c("euclidean", "maximum", "manhattan",
-    "canberra", "binary", "minkowski"), NULL),
-  select_corr = ifelse(type == "correlation", c("pearson", "kendall", "spearman"), NULL),
-  select_hclust = c("ward.D", "ward.D2", "single", "complete", "average", "mcquitty",
-    "median", "centroid"),
-  select_scale = ifelse(type == "heatmap", c("column", "row"), "none"),
-  draw_dendrogram = c("none", "row", "column", "both"),
-  showRowDendrogram = TRUE,
-  showColDendrogram = TRUE,
-  showRowLabel = TRUE,
-  showColLabel = TRUE,
-  fontsize_col,
-  fontsize_row,
+  type,
+  direction = NULL,
+  select_dist = NULL,
+  select_corr = NULL,
+  select_scale = "none",
   pal,
-  title
+  ...
 )
 }
 \arguments{
 \item{df}{A data frame}
 
-\item{type}{Character, choose from one of three values for plot types}
+\item{type}{Character to choose from one of three types: "heatmap",
+"correlation", "distance".}
 
-\item{select_dist}{Character}
+\item{direction}{Character taking the following values: "col" or "row" for
+correlation or distance types plot.}
 
-\item{select_corr}{Character}
+\item{select_dist}{Method used to compute the distance (dissimilarity)
+between both rows and columns that can take the following values :
+"euclidean", "maximum", "manhattan", "canberra", "binary", "minkowski". To be
+use with type distance.}
 
-\item{select_scale}{Character}
+\item{select_corr}{Correlation analysis model to use that can take the
+following values : "pearson", "kendall", "spearman" to be use with type
+correlation.}
 
-\item{draw_dendrogram}{Character}
+\item{select_scale}{Character indicating if the values should be centered and
+scaled in either the row direction or the column direction, or none.
+The default is "none".}
 
-\item{showRowDendrogram}{Boolean}
+\item{pal}{Color palette to use. Obtained from
+`RColorBrewer::brewer.pal.info`}
 
-\item{showColDendrogram}{Boolean}
+\item{...}{Other parameters to be passed to  `heatmaply()`}
 
-\item{showRowLabel}{Boolean}
-
-\item{showColLabel}{Boolean}
-
-\item{pal}{Character}
-
-\item{title}{Character}
+\item{id}{A string.}
 }
 \value{
+A Shiny module.
+
 A heatmap plot generated with pheatmap
 }
 \description{
+R Shiny module to generate a heatmap/distance/correlation using `heatmaply`
+}
+\examples{
+plotHeatmaply_demo()
+plotHeatmaply_demo_2()
 plot Heatmap
+
 }

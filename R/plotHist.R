@@ -1,13 +1,3 @@
-# This module was created during the St Jude Bio-Hackathon of May 2023 by the team 13.
-# author: Max Qiu (ytqiuhaowen@gmail.com)
-# author: Louis Le Nézet (louislenezet@gmail.com)
-# author: Alyssa Obermayer (aobermayer4@gmail.com)
-
-#### Library needed #### ----------
-usethis::use_package("shiny")
-usethis::use_package("ggplot2")
-
-#### Function needed to work #### ----------
 #' Plot ggplot histogram
 #'
 #' @param data A numeric vector.
@@ -15,9 +5,10 @@ usethis::use_package("ggplot2")
 #' @param title Character. Plot title.
 #'
 #' @return A ggplot histogram with a title
-#' @keywords hplot
-#' @export ggplot_truehist
-ggplot_truehist <- function(data, breaks = 50, title) {
+#' @keywords histogram
+#' @author Max Qiu, Louis Le Nézet, Alyssa Obermayer, Jared Andrews
+#' @export
+ggplot_truehist <- function(data, breaks = 50, title = NULL) {
   data <- as.numeric(data)
   ggplot2::ggplot() +
     ggplot2::aes(data) +
@@ -36,7 +27,7 @@ ggplot_truehist <- function(data, breaks = 50, title) {
 #### UI function of the module #### ----------
 #' Histogram plot ui module
 #'
-#' @description R Shiny module UI to generate an hitogram plot.
+#' @description R Shiny module UI to generate a histogram plot.
 #'
 #' @details This module create a histogram plot from a given
 #' dataframe.
@@ -48,8 +39,9 @@ ggplot_truehist <- function(data, breaks = 50, title) {
 #' \dontrun{
 #'     plotHist_demo()
 #' }
-#' @keywords hplot
-#' @export plotHist_ui
+#' @keywords histogram
+#' @author Max Qiu, Louis Le Nézet, Alyssa Obermayer, Jared Andrews
+#' @export
 plotHist_ui <- function(id) {
   ns <- shiny::NS(id)
   shiny::tagList(
@@ -75,7 +67,7 @@ plotHist_ui <- function(id) {
 #' \dontrun{
 #'     plotHist_demo()
 #' }
-#' @keywords hplot
+#' @keywords histogram
 #' @export plotHist_server
 plotHist_server <- function(id, data, title = shiny::reactive("Histogram")) {
   stopifnot(shiny::is.reactive(data))
@@ -109,13 +101,12 @@ plotHist_server <- function(id, data, title = shiny::reactive("Histogram")) {
 #' \dontrun{
 #'     plotHist_demo()
 #' }
-#' @keywords hplot
+#' @keywords histogram
 #' @export plotHist_demo
 plotHist_demo <- function() {
   ui <- shiny::fluidPage(
     shiny::sidebarLayout(
       shiny::sidebarPanel(
-        dataImport_ui("datafile", "User data"),
         selectVar_ui("var", "Choose a column"),
       ),
       shiny::mainPanel(
@@ -125,8 +116,7 @@ plotHist_demo <- function() {
   )
 
   server <- function(input, output, session) {
-    data <- dataImport_server("datafile")
-    var <- selectVar_server("var", data, filter = is.numeric)
+    var <- selectVar_server("var", cars, filter = is.numeric)
     plotHist_server("hist", var)
   }
   shiny::shinyApp(ui, server)
