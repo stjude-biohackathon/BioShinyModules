@@ -1,6 +1,6 @@
 Package: BioShinyModules
 Version: 0.1.0
-Date: 2023-05-31
+Date: 2023-06-21
 Title: Shiny Modules for data exploration and visualisation
 Encoding: UTF-8
 Authors@R: c(
@@ -26,16 +26,16 @@ Imports:
     stats,
     grDevices
 Description: This comprehensive R package is designed to empower data analysis and exploration
-		by providing a collection of interactive Shiny modules. With a wide range of visualization
-		tools including heatmaps, PCA plots, violin plots, scatter plots, box plots, survival analysis,
-		methylation analysis, and more. This package allows users to seamlessly visualize and explore
-		their data. Whether importing and filtering data, assessing coverage or examining intricate
+		by providing a collection of interactive Shiny modules. This package allows users to 
+        seamlessly visualize and explore their data with a wide range of visualization tools 
+        including heatmaps, PCA plots, violin plots, scatter plots, box plots, survival analysis,
+		methylation analysis, and more. Whether importing and filtering data, assessing coverage or examining intricate
 		patterns, this package offers an intuitive and interactive interface for effortless data
 		visualization and exploration.
 License: file LICENSE
 biocViews: ShinyApps, PrincipalComponent, Survival, Visualization, DataImport
-URL: https://github.com/stjude-biohackathon/KIDS23-Team13
-BugReports: https://github.com/stjude-biohackathon/KIDS23-Team13/issues
+URL: https://github.com/stjude-biohackathon/BioShinyModules
+BugReports: https://github.com/stjude-biohackathon/BioShinyModules/issues
 RoxygenNote: 7.2.3
 VignetteBuilder: knitr
 Suggests:

@@ -2,8 +2,6 @@
 # author: Max Qiu (maxqiu@unl.edu)
 # author: Louis Le Nézet (louislenezet@gmail.com)
 
-#### Library needed #### ----------
-usethis::use_package("shiny")
 
 #### Function needed to work #### ----------
 #' Function to select a variable fitting a criterion in a dataframe
@@ -74,13 +72,11 @@ selectVar_server <- function(id, df, filter = is.numeric) {
 #' @export selectVar_demo
 selectVar_demo <- function(filter = is.numeric) {
   ui <- shiny::fluidPage(
-    dataImport_ui("datafile", "User data"),
     selectVar_ui("var", "Choose a column"),
     shiny::verbatimTextOutput("out")
   )
   server <- function(input, output, session) {
-    data <- dataImport_server("datafile")
-    var <- selectVar_server("var", data, filter = filter)
+    var <- selectVar_server("var", cars, filter = filter)
     output$out <- shiny::renderPrint(var())
   }
 
