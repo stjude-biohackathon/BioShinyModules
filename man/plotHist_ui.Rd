@@ -13,7 +13,7 @@ plotHist_ui(id)
 A Shiny UI.
 }
 \description{
-R Shiny module UI to generate an hitogram plot.
+R Shiny module UI to generate a histogram plot.
 }
 \details{
 This module create a histogram plot from a given
@@ -21,8 +21,19 @@ dataframe.
 The number of bins is selectable by the user.
 }
 \examples{
-\dontrun{
-    plotHist_demo()
+\dontshow{if (interactive()) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
+ui <- shiny::fluidPage(
+      plotHist_ui("hist")
+)
+
+server <- function(input, output, session) {
+  speed <- reactive(cars$speed)
+  plotHist_server("hist", speed)
 }
+shiny::shinyApp(ui, server)
+\dontshow{\}) # examplesIf}
 }
-\keyword{hplot}
+\author{
+Max Qiu, Louis Le Nézet, Alyssa Obermayer, Jared Andrews
+}
+\keyword{histogram}

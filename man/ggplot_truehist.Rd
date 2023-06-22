@@ -4,10 +4,10 @@
 \alias{ggplot_truehist}
 \title{Plot ggplot histogram}
 \usage{
-ggplot_truehist(data, breaks = 50, title)
+ggplot_truehist(data, breaks = 50, title = NULL)
 }
 \arguments{
-\item{data}{A numeric vector.}
+\item{data}{A numeric vector of data to use to generate a histogram.}
 
 \item{breaks}{Numeric. Number of bins. Default is 50}
 
@@ -19,4 +19,7 @@ A ggplot histogram with a title
 \description{
 Plot ggplot histogram
 }
-\keyword{hplot}
+\author{
+Max Qiu, Louis Le Nézet, Alyssa Obermayer, Jared Andrews
+}
+\keyword{histogram}

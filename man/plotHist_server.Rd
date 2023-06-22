@@ -4,7 +4,7 @@
 \alias{plotHist_server}
 \title{Histogram plot server module}
 \usage{
-plotHist_server(id, data, title = shiny::reactive("Histogram"))
+plotHist_server(id, data, title = reactive("Histogram"))
 }
 \arguments{
 \item{id}{A string.}
@@ -14,7 +14,7 @@ plotHist_server(id, data, title = shiny::reactive("Histogram"))
 \item{title}{A reactive string to be used as a title}
 }
 \value{
-Histogram plot.
+moduleServer containing histogram plot output and server code for generating plot.
 }
 \description{
 R Shiny module server to generate an histogram plot.
@@ -25,8 +25,11 @@ dataframe.
 The number of bins is selectable by the user.
 }
 \examples{
-\dontrun{
-    plotHist_demo()
+if (interactive()) {
+  plotHist_demo()
 }
 }
-\keyword{hplot}
+\author{
+Max Qiu, Louis Le Nézet, Alyssa Obermayer, Jared Andrews
+}
+\keyword{histogram}

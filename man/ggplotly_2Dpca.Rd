@@ -2,7 +2,7 @@
 % Please edit documentation in R/plotPCA.R
 \name{ggplotly_2Dpca}
 \alias{ggplotly_2Dpca}
-\title{plot PCA 2D}
+\title{R Shiny module to generate PCA plot with choice of 2D or 3D}
 \usage{
 ggplotly_2Dpca(
   df,
@@ -16,17 +16,30 @@ ggplotly_2Dpca(
 )
 }
 \arguments{
+\item{df}{A dataframe containing the value for each sample (column)
+for all the features (rows).}
+
 \item{sample_anno}{A data frame containing sample metadata}
 
 \item{sample_anno_col}{Character. Sample annotation column in `sample_anno`}
 
 \item{title}{Character. Plot title}
 
+\item{id}{A string.}
+
 \item{data}{A data frame with feature (row) by sample (column).}
 }
 \value{
+A Shiny module.
+
 GGplot PCA
 }
 \description{
+R Shiny module to generate PCA plot with choice of 2D or 3D
+}
+\examples{
+plotPCA_demo()
+plotPCA_demo_2()
 plot PCA 2D
+
 }

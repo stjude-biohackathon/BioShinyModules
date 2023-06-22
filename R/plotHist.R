@@ -1,30 +1,31 @@
 #' Plot ggplot histogram
 #'
-#' @param data A numeric vector.
+#' @param data A numeric vector of data to use to generate a histogram.
 #' @param breaks Numeric. Number of bins. Default is 50
 #' @param title Character. Plot title.
 #'
 #' @return A ggplot histogram with a title
 #' @keywords histogram
 #' @author Max Qiu, Louis Le Nézet, Alyssa Obermayer, Jared Andrews
+#' @import ggplot2
 #' @export
 ggplot_truehist <- function(data, breaks = 50, title = NULL) {
   data <- as.numeric(data)
-  ggplot2::ggplot() +
-    ggplot2::aes(data) +
-    ggplot2::geom_histogram(ggplot2::aes(y = ggplot2::after_stat(stats::density)),
+  ggplot() +
+    aes(data) +
+    geom_histogram(aes(data),
       bins = breaks,
       fill = "cornflowerblue", color = "gray30"
     ) +
-    ggplot2::labs(title = title) +
-    ggplot2::theme_classic() +
-    ggplot2::theme(
-      plot.title = ggplot2::element_text(hjust = 0.5),
+    labs(title = title) +
+    theme_classic() +
+    theme(
+      plot.title = element_text(hjust = 0.5),
       aspect.ratio = 1
     )
 }
 
-#### UI function of the module #### ----------
+
 #' Histogram plot ui module
 #'
 #' @description R Shiny module UI to generate a histogram plot.
@@ -35,22 +36,30 @@ ggplot_truehist <- function(data, breaks = 50, title = NULL) {
 #'
 #' @param id A string.
 #' @returns A Shiny UI.
-#' @examples
-#' \dontrun{
-#'     plotHist_demo()
+#' @examplesIf interactive()
+#' ui <- shiny::fluidPage(
+#'       plotHist_ui("hist")
+#' )
+#'
+#' server <- function(input, output, session) {
+#'   speed <- reactive(cars$speed)
+#'   plotHist_server("hist", speed)
 #' }
+#' shiny::shinyApp(ui, server)
+#' 
 #' @keywords histogram
 #' @author Max Qiu, Louis Le Nézet, Alyssa Obermayer, Jared Andrews
+#' @importFrom shiny NS tagList numericInput plotOutput
 #' @export
 plotHist_ui <- function(id) {
-  ns <- shiny::NS(id)
-  shiny::tagList(
-    shiny::numericInput(ns("bins"), "bins", 20, min = 1, step = 1),
-    shiny::plotOutput(ns("hist"))
+  ns <- NS(id)
+  tagList(
+    numericInput(ns("bins"), "bins", 20, min = 1, step = 1),
+    plotOutput(ns("hist"))
   )
 }
 
-#### Server function of the module #### ----------
+
 #' Histogram plot server module
 #'
 #' @description R Shiny module server to generate an histogram plot.
@@ -62,28 +71,29 @@ plotHist_ui <- function(id) {
 #' @param id A string.
 #' @param data A reactive vector of numeric values
 #' @param title A reactive string to be used as a title
-#' @returns Histogram plot.
+#' @returns moduleServer containing histogram plot output and server code for generating plot.
 #' @examples
-#' \dontrun{
-#'     plotHist_demo()
+#' if (interactive()) {
+#'   plotHist_demo()
 #' }
 #' @keywords histogram
+#' @author Max Qiu, Louis Le Nézet, Alyssa Obermayer, Jared Andrews
+#' @importFrom shiny is.reactive moduleServer reactive req renderPlot
 #' @export plotHist_server
-plotHist_server <- function(id, data, title = shiny::reactive("Histogram")) {
-  stopifnot(shiny::is.reactive(data))
-  stopifnot(shiny::is.reactive(title))
+plotHist_server <- function(id, data, title = reactive("Histogram")) {
+  stopifnot(is.reactive(data))
+  stopifnot(is.reactive(title))
 
-  shiny::moduleServer(id, function(input, output, session) {
-    hist_plot <- shiny::reactive({
-      shiny::req(is.numeric(data()))
-      main <- paste0(title(), " [", input$bins, "]")
+  moduleServer(id, function(input, output, session) {
+    hist_plot <- reactive({
+      req(is.numeric(data()))
+      main <- paste0(title(), " [", input$bins, " bins]")
       ggplot_truehist(data(), breaks = input$bins, title = main)
     })
 
-    output$hist <- shiny::renderPlot({
+    output$hist <- renderPlot({
       hist_plot()
     })
-    return(hist_plot)
   })
 }
 
@@ -98,18 +108,19 @@ plotHist_server <- function(id, data, title = shiny::reactive("Histogram")) {
 #'
 #' @returns A shiny app
 #' @examples
-#' \dontrun{
-#'     plotHist_demo()
+#' if (interactive()) {
+#'   plotHist_demo()
 #' }
 #' @keywords histogram
+#' @importFrom shiny fluidPage mainPanel selectInput sidebarLayout sidebarPanel shinyApp
 #' @export plotHist_demo
 plotHist_demo <- function() {
-  ui <- shiny::fluidPage(
-    shiny::sidebarLayout(
-      shiny::sidebarPanel(
+  ui <- fluidPage(
+    sidebarLayout(
+      sidebarPanel(
         selectVar_ui("var", "Choose a column"),
       ),
-      shiny::mainPanel(
+      mainPanel(
         plotHist_ui("hist")
       )
     )
@@ -119,5 +130,5 @@ plotHist_demo <- function() {
     var <- selectVar_server("var", cars, filter = is.numeric)
     plotHist_server("hist", var)
   }
-  shiny::shinyApp(ui, server)
+  shinyApp(ui, server)
 }

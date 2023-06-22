@@ -18,8 +18,8 @@ The user can select the dataframe and the variable to use,
 as well as the number of bins for the histogramm.
 }
 \examples{
-\dontrun{
-    plotHist_demo()
+if (interactive()) {
+  plotHist_demo()
 }
 }
-\keyword{hplot}
+\keyword{histogram}
